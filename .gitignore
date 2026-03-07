@@ -1,0 +1,5 @@
+.pytest_cache/
+.sounio-stroke-lab/
+__pycache__/
+*.pyc
+*.egg-info/

@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sounio-stroke-lab"
+version = "0.1.0"
+description = "Local research and clinical scaffold for benchmarking Sounio hypercomplex stroke analysis."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+  "fastapi>=0.115.0",
+  "httpx>=0.28.0",
+  "matplotlib>=3.9.0",
+  "nibabel>=5.3.0",
+  "numpy>=2.0.0",
+  "pydantic>=2.11.0",
+  "pydicom>=3.0.0",
+  "python-multipart>=0.0.9",
+  "scipy>=1.14.0",
+  "uvicorn>=0.30.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+]
+
+[project.scripts]
+sounio-stroke-lab = "sounio_stroke_lab.cli:main"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
