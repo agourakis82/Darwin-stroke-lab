@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Darwin.ResearchOs.Core\Darwin.ResearchOs.Core.fsproj" />
+    <ProjectReference Include="..\Darwin.ResearchOs.K8s\Darwin.ResearchOs.K8s.fsproj" />
+    <ProjectReference Include="..\Darwin.ResearchOs.Storage\Darwin.ResearchOs.Storage.fsproj" />
+  </ItemGroup>
+
+</Project>

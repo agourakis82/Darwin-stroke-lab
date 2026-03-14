@@ -138,11 +138,20 @@ def resample_volume(volume: np.ndarray, shape: tuple[int, int, int] = DEFAULT_TA
 
 
 def estimate_hemisphere(volume: np.ndarray) -> str:
-    mirrored = np.flip(volume, axis=2)
-    delta = mirrored - volume
-    right_deficit = float(delta[:, :, volume.shape[2] // 2 :].mean())
-    left_deficit = float((-delta)[:, :, : volume.shape[2] // 2].mean())
-    return "right" if right_deficit >= left_deficit else "left"
+    mid = volume.shape[2] // 2
+    left = volume[:, :, :mid]
+    right = volume[:, :, mid:]
+    mirrored_right = np.flip(right, axis=2)
+    mirrored_left = np.flip(left, axis=2)
+
+    # Estimate which hemisphere is darker than its mirrored counterpart.
+    left_deficit = float(np.clip(mirrored_right - left, 0.0, None).mean())
+    right_deficit = float(np.clip(mirrored_left - right, 0.0, None).mean())
+    if abs(left_deficit - right_deficit) > 1e-4:
+        return "left" if left_deficit > right_deficit else "right"
+
+    # Near-symmetric studies fall back to the darker mean hemisphere.
+    return "left" if float(left.mean()) < float(right.mean()) else "right"
 
 
 def prepare_volume(volume: np.ndarray, warnings: list[str] | None = None) -> PreprocessedVolume:

@@ -1,0 +1,72 @@
+{
+  "$defs": {
+    "ProgramStatus": {
+      "enum": [
+        "created",
+        "active",
+        "completed",
+        "blocked",
+        "archived"
+      ],
+      "title": "ProgramStatus",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "campaign_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Campaign Ids",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "hypothesis": {
+      "default": "",
+      "title": "Hypothesis",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "notes": {
+      "default": "",
+      "title": "Notes",
+      "type": "string"
+    },
+    "objective": {
+      "default": "",
+      "title": "Objective",
+      "type": "string"
+    },
+    "program_id": {
+      "title": "Program Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/ProgramStatus",
+      "default": "created"
+    },
+    "summary": {
+      "additionalProperties": true,
+      "title": "Summary",
+      "type": "object"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "program_id",
+    "name"
+  ],
+  "title": "ProgramRecord",
+  "type": "object"
+}

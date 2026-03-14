@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sounio-stroke-api
+  namespace: darwin-genomics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sounio-stroke-lab
+      app.kubernetes.io/component: api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sounio-stroke-lab
+        app.kubernetes.io/component: api
+    spec:
+      serviceAccountName: sounio-stroke-runner
+      containers:
+        - name: api
+          image: ghcr.io/agourakis82/sounio-stroke-lab-worker:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - uvicorn
+            - sounio_stroke_lab.main:app
+            - --host
+            - 0.0.0.0
+            - --port
+            - "8000"
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: sounio-stroke-runtime
+          env:
+            - name: SOUNIO_STROKE_DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: sounio-stroke-db
+                  key: dsn
+            - name: SOUNIO_STROKE_MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sounio-stroke-minio
+                  key: access_key
+            - name: SOUNIO_STROKE_MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sounio-stroke-minio
+                  key: secret_key
+            - name: SOUNIO_STROKE_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: sounio-stroke-api
+                  key: bearer_token
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi

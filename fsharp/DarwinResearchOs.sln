@@ -1,0 +1,85 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EEDBD097-2953-4B0D-8664-D51BD28BFC0B}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Darwin.ResearchOs.Contracts", "src\Darwin.ResearchOs.Contracts\Darwin.ResearchOs.Contracts.fsproj", "{655EB206-3A3D-423B-92CC-4DBFE6EE0B62}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Darwin.ResearchOs.Core", "src\Darwin.ResearchOs.Core\Darwin.ResearchOs.Core.fsproj", "{0EF82E51-C69E-4B4D-9A0E-8601792506C1}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Darwin.ResearchOs.Storage", "src\Darwin.ResearchOs.Storage\Darwin.ResearchOs.Storage.fsproj", "{2CFCCBC2-B7A1-433E-B702-559C107CF8CA}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Darwin.ResearchOs.K8s", "src\Darwin.ResearchOs.K8s\Darwin.ResearchOs.K8s.fsproj", "{169F25B4-A37D-48EE-BEB2-CFC45E217318}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Darwin.StrokeLab", "src\Darwin.StrokeLab\Darwin.StrokeLab.fsproj", "{4F89622D-5072-48EA-8DFF-B64200D74E94}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Darwin.ResearchOs.Api", "src\Darwin.ResearchOs.Api\Darwin.ResearchOs.Api.fsproj", "{0F39A178-7058-4360-B193-5C65CD840AD5}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Darwin.ResearchOs.Worker", "src\Darwin.ResearchOs.Worker\Darwin.ResearchOs.Worker.fsproj", "{AE09384E-5CA7-4551-9221-E9209278E389}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{08A95C71-461A-401E-8460-11CFB41C1B31}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Darwin.ResearchOs.Contracts.Tests", "tests\Darwin.ResearchOs.Contracts.Tests\Darwin.ResearchOs.Contracts.Tests.fsproj", "{BCA39F82-D5EA-457C-BEA2-F7B637A89477}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Darwin.ResearchOs.Core.Tests", "tests\Darwin.ResearchOs.Core.Tests\Darwin.ResearchOs.Core.Tests.fsproj", "{4F74421E-4A9B-40D0-B38C-8821C6BA21CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{655EB206-3A3D-423B-92CC-4DBFE6EE0B62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{655EB206-3A3D-423B-92CC-4DBFE6EE0B62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{655EB206-3A3D-423B-92CC-4DBFE6EE0B62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{655EB206-3A3D-423B-92CC-4DBFE6EE0B62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EF82E51-C69E-4B4D-9A0E-8601792506C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EF82E51-C69E-4B4D-9A0E-8601792506C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EF82E51-C69E-4B4D-9A0E-8601792506C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EF82E51-C69E-4B4D-9A0E-8601792506C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CFCCBC2-B7A1-433E-B702-559C107CF8CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CFCCBC2-B7A1-433E-B702-559C107CF8CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CFCCBC2-B7A1-433E-B702-559C107CF8CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CFCCBC2-B7A1-433E-B702-559C107CF8CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{169F25B4-A37D-48EE-BEB2-CFC45E217318}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{169F25B4-A37D-48EE-BEB2-CFC45E217318}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{169F25B4-A37D-48EE-BEB2-CFC45E217318}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{169F25B4-A37D-48EE-BEB2-CFC45E217318}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F89622D-5072-48EA-8DFF-B64200D74E94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F89622D-5072-48EA-8DFF-B64200D74E94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F89622D-5072-48EA-8DFF-B64200D74E94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F89622D-5072-48EA-8DFF-B64200D74E94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F39A178-7058-4360-B193-5C65CD840AD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F39A178-7058-4360-B193-5C65CD840AD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F39A178-7058-4360-B193-5C65CD840AD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F39A178-7058-4360-B193-5C65CD840AD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE09384E-5CA7-4551-9221-E9209278E389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE09384E-5CA7-4551-9221-E9209278E389}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE09384E-5CA7-4551-9221-E9209278E389}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE09384E-5CA7-4551-9221-E9209278E389}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCA39F82-D5EA-457C-BEA2-F7B637A89477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCA39F82-D5EA-457C-BEA2-F7B637A89477}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCA39F82-D5EA-457C-BEA2-F7B637A89477}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCA39F82-D5EA-457C-BEA2-F7B637A89477}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F74421E-4A9B-40D0-B38C-8821C6BA21CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F74421E-4A9B-40D0-B38C-8821C6BA21CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F74421E-4A9B-40D0-B38C-8821C6BA21CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F74421E-4A9B-40D0-B38C-8821C6BA21CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{655EB206-3A3D-423B-92CC-4DBFE6EE0B62} = {EEDBD097-2953-4B0D-8664-D51BD28BFC0B}
+		{0EF82E51-C69E-4B4D-9A0E-8601792506C1} = {EEDBD097-2953-4B0D-8664-D51BD28BFC0B}
+		{2CFCCBC2-B7A1-433E-B702-559C107CF8CA} = {EEDBD097-2953-4B0D-8664-D51BD28BFC0B}
+		{169F25B4-A37D-48EE-BEB2-CFC45E217318} = {EEDBD097-2953-4B0D-8664-D51BD28BFC0B}
+		{4F89622D-5072-48EA-8DFF-B64200D74E94} = {EEDBD097-2953-4B0D-8664-D51BD28BFC0B}
+		{0F39A178-7058-4360-B193-5C65CD840AD5} = {EEDBD097-2953-4B0D-8664-D51BD28BFC0B}
+		{AE09384E-5CA7-4551-9221-E9209278E389} = {EEDBD097-2953-4B0D-8664-D51BD28BFC0B}
+		{BCA39F82-D5EA-457C-BEA2-F7B637A89477} = {08A95C71-461A-401E-8460-11CFB41C1B31}
+		{4F74421E-4A9B-40D0-B38C-8821C6BA21CE} = {08A95C71-461A-401E-8460-11CFB41C1B31}
+	EndGlobalSection
+EndGlobal

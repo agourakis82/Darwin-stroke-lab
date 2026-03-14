@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+patches:
+  - target:
+      kind: PersistentVolumeClaim
+      name: sounio-stroke-datasets
+      namespace: darwin-genomics
+    patch: |-
+      - op: replace
+        path: /spec/accessModes
+        value:
+          - ReadWriteOnce
+      - op: replace
+        path: /spec/storageClassName
+        value: rook-ceph-block

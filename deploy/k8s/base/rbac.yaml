@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sounio-stroke-runner
+  namespace: darwin-genomics
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sounio-stroke-runner
+  namespace: darwin-genomics
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "delete", "get", "list", "watch"]
+  - apiGroups: ["kueue.x-k8s.io"]
+    resources: ["workloads"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sounio-stroke-runner
+  namespace: darwin-genomics
+subjects:
+  - kind: ServiceAccount
+    name: sounio-stroke-runner
+    namespace: darwin-genomics
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sounio-stroke-runner

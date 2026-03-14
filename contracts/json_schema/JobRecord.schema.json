@@ -1,0 +1,100 @@
+{
+  "$defs": {
+    "JobKind": {
+      "enum": [
+        "benchmark",
+        "agent_run",
+        "study_analysis"
+      ],
+      "title": "JobKind",
+      "type": "string"
+    },
+    "JobStatus": {
+      "enum": [
+        "queued",
+        "running",
+        "completed",
+        "failed",
+        "cancelled"
+      ],
+      "title": "JobStatus",
+      "type": "string"
+    },
+    "RecordOwnerType": {
+      "enum": [
+        "study",
+        "benchmark_run",
+        "agent_run",
+        "research_brief",
+        "campaign",
+        "portfolio",
+        "program"
+      ],
+      "title": "RecordOwnerType",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "error": {
+      "default": "",
+      "title": "Error",
+      "type": "string"
+    },
+    "executor": {
+      "default": "in-process",
+      "title": "Executor",
+      "type": "string"
+    },
+    "job_id": {
+      "title": "Job Id",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/JobKind"
+    },
+    "owner_id": {
+      "title": "Owner Id",
+      "type": "string"
+    },
+    "owner_type": {
+      "$ref": "#/$defs/RecordOwnerType"
+    },
+    "queue_name": {
+      "default": "local-inline",
+      "title": "Queue Name",
+      "type": "string"
+    },
+    "request_payload": {
+      "additionalProperties": true,
+      "title": "Request Payload",
+      "type": "object"
+    },
+    "result_payload": {
+      "additionalProperties": true,
+      "title": "Result Payload",
+      "type": "object"
+    },
+    "status": {
+      "$ref": "#/$defs/JobStatus"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "job_id",
+    "owner_type",
+    "owner_id",
+    "kind",
+    "status"
+  ],
+  "title": "JobRecord",
+  "type": "object"
+}

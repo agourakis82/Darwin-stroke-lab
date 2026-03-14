@@ -1,0 +1,13 @@
+{
+  "artifact_id": "<artifact_id>",
+  "bytes": 2300,
+  "content_type": "application/json",
+  "created_at": "<created_at>",
+  "description": "Fitted Sounio ablation artifact with asymmetry_channel removed.",
+  "kind": "trained-model-ablation",
+  "name": "ablation_asymmetry_channel",
+  "owner_id": "<owner_id>",
+  "owner_type": "benchmark_run",
+  "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/ablations/asymmetry_channel.json",
+  "uri": null
+}

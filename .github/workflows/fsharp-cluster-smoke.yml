@@ -1,0 +1,93 @@
+name: F# Cluster Smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Smoke mode to run through the F# control plane
+        required: true
+        default: sounio
+        type: choice
+        options:
+          - sounio
+          - benchmark
+      path:
+        description: Full path rebuild or fast path reusing bundle/image/import
+        required: true
+        default: fast
+        type: choice
+        options:
+          - fast
+          - full
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fsharp-cluster-smoke
+  cancel-in-progress: false
+
+jobs:
+  cluster-smoke:
+    runs-on:
+      - self-hosted
+      - macOS
+    timeout-minutes: 90
+    env:
+      DARWIN_RESEARCH_OS_SSH_HOST: ${{ vars.DARWIN_RESEARCH_OS_SSH_HOST }}
+      DARWIN_RESEARCH_OS_WORKER_IMAGE: ${{ vars.DARWIN_RESEARCH_OS_WORKER_IMAGE }}
+      SOUNIO_SOURCE_ROOT: ${{ vars.SOUNIO_SOURCE_ROOT }}
+      SOUNIO_BINARY_ROOT: ${{ vars.SOUNIO_BINARY_ROOT }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Resolve smoke target
+        id: target
+        shell: bash
+        run: |
+          case "${{ inputs.mode }}:${{ inputs.path }}" in
+            sounio:fast) target="smoke-cluster-sounio-fast" ;;
+            sounio:full) target="smoke-cluster-sounio" ;;
+            benchmark:fast) target="smoke-cluster-benchmark-fast" ;;
+            benchmark:full) target="smoke-cluster-benchmark" ;;
+            *)
+              echo "Unsupported smoke combination: ${{ inputs.mode }} / ${{ inputs.path }}" >&2
+              exit 1
+              ;;
+          esac
+          echo "target=${target}" >> "$GITHUB_OUTPUT"
+
+      - name: Show runner toolchain
+        shell: bash
+        run: |
+          python3 --version
+          dotnet --info
+          docker version
+          make help
+
+      - name: Run cluster smoke
+        shell: bash
+        run: make "${{ steps.target.outputs.target }}"
+
+      - name: Upload smoke logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fsharp-cluster-smoke-${{ inputs.mode }}-${{ inputs.path }}-${{ github.run_id }}
+          path: |
+            .codex-run/**
+            .fsharp-cluster-smoke-objects/**
+          if-no-files-found: warn
+          retention-days: 7

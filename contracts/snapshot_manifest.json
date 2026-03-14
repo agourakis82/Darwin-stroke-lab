@@ -1,0 +1,20 @@
+{
+  "comparison_registry": "/Users/demetriosagourakis/Documents/New project/contracts/registry/comparison_registry.json",
+  "golden:AgentRun": "/Users/demetriosagourakis/Documents/New project/contracts/golden/agent_run.json",
+  "golden:ArtifactRef": "/Users/demetriosagourakis/Documents/New project/contracts/golden/artifact_ref.json",
+  "golden:BenchmarkRun": "/Users/demetriosagourakis/Documents/New project/contracts/golden/benchmark_run.json",
+  "golden:CampaignRecord": "/Users/demetriosagourakis/Documents/New project/contracts/golden/campaign_record.json",
+  "golden:JobRecord": "/Users/demetriosagourakis/Documents/New project/contracts/golden/job_record.json",
+  "golden:PortfolioReport": "/Users/demetriosagourakis/Documents/New project/contracts/golden/portfolio_report.json",
+  "golden:ProgramPortfolioReport": "/Users/demetriosagourakis/Documents/New project/contracts/golden/program_portfolio_report.json",
+  "golden:ProgramRecord": "/Users/demetriosagourakis/Documents/New project/contracts/golden/program_record.json",
+  "openapi": "/Users/demetriosagourakis/Documents/New project/contracts/openapi/openapi.json",
+  "schema:AgentRun": "/Users/demetriosagourakis/Documents/New project/contracts/json_schema/AgentRun.schema.json",
+  "schema:ArtifactRef": "/Users/demetriosagourakis/Documents/New project/contracts/json_schema/ArtifactRef.schema.json",
+  "schema:BenchmarkRun": "/Users/demetriosagourakis/Documents/New project/contracts/json_schema/BenchmarkRun.schema.json",
+  "schema:CampaignRecord": "/Users/demetriosagourakis/Documents/New project/contracts/json_schema/CampaignRecord.schema.json",
+  "schema:JobRecord": "/Users/demetriosagourakis/Documents/New project/contracts/json_schema/JobRecord.schema.json",
+  "schema:PortfolioReport": "/Users/demetriosagourakis/Documents/New project/contracts/json_schema/PortfolioReport.schema.json",
+  "schema:ProgramPortfolioReport": "/Users/demetriosagourakis/Documents/New project/contracts/json_schema/ProgramPortfolioReport.schema.json",
+  "schema:ProgramRecord": "/Users/demetriosagourakis/Documents/New project/contracts/json_schema/ProgramRecord.schema.json"
+}

@@ -1,0 +1,180 @@
+{
+  "$defs": {
+    "CampaignStatus": {
+      "enum": [
+        "created",
+        "running",
+        "completed",
+        "failed",
+        "cancelled"
+      ],
+      "title": "CampaignStatus",
+      "type": "string"
+    },
+    "PortfolioCampaignSummary": {
+      "properties": {
+        "best_run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Best Run Id"
+        },
+        "blocked_plan_count": {
+          "default": 0,
+          "title": "Blocked Plan Count",
+          "type": "integer"
+        },
+        "campaign_id": {
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "completed_runs": {
+          "default": 0,
+          "title": "Completed Runs",
+          "type": "integer"
+        },
+        "failed_runs": {
+          "default": 0,
+          "title": "Failed Runs",
+          "type": "integer"
+        },
+        "leading_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Leading Model"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "ready_plan_count": {
+          "default": 0,
+          "title": "Ready Plan Count",
+          "type": "integer"
+        },
+        "sounio_aspects_mae": {
+          "default": 999.0,
+          "title": "Sounio Aspects Mae",
+          "type": "number"
+        },
+        "sounio_auc": {
+          "default": 0.0,
+          "title": "Sounio Auc",
+          "type": "number"
+        },
+        "sounio_isles_dice": {
+          "default": 0.0,
+          "title": "Sounio Isles Dice",
+          "type": "number"
+        },
+        "status": {
+          "$ref": "#/$defs/CampaignStatus"
+        },
+        "top_plan_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Top Plan Id"
+        },
+        "total_runs": {
+          "default": 0,
+          "title": "Total Runs",
+          "type": "integer"
+        },
+        "watch_plan_count": {
+          "default": 0,
+          "title": "Watch Plan Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "name",
+        "status"
+      ],
+      "title": "PortfolioCampaignSummary",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "campaigns": {
+      "items": {
+        "$ref": "#/$defs/PortfolioCampaignSummary"
+      },
+      "title": "Campaigns",
+      "type": "array"
+    },
+    "completed_campaigns": {
+      "default": 0,
+      "title": "Completed Campaigns",
+      "type": "integer"
+    },
+    "failed_campaigns": {
+      "default": 0,
+      "title": "Failed Campaigns",
+      "type": "integer"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "leading_campaign_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Leading Campaign Id"
+    },
+    "next_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Next Actions",
+      "type": "array"
+    },
+    "portfolio_id": {
+      "title": "Portfolio Id",
+      "type": "string"
+    },
+    "running_campaigns": {
+      "default": 0,
+      "title": "Running Campaigns",
+      "type": "integer"
+    },
+    "total_campaigns": {
+      "default": 0,
+      "title": "Total Campaigns",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "portfolio_id"
+  ],
+  "title": "PortfolioReport",
+  "type": "object"
+}

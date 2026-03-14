@@ -3,3 +3,13 @@
 __pycache__/
 *.pyc
 *.egg-info/
+.dev-smoke/
+.local-battery/
+.k8s-battery/
+.codex-run/
+.fsharp-cluster-smoke-objects/
+.rewrite-cache/
+.tmp/
+.DS_Store
+fsharp/**/bin/
+fsharp/**/obj/

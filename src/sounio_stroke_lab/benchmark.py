@@ -47,6 +47,7 @@ from sounio_stroke_lab.schemas import (
     LanguageStack,
     MetricInterval,
     ModelFamily,
+    RecordOwnerType,
     TrainedModelArtifact,
 )
 from sounio_stroke_lab.storage import StorageManager
@@ -439,7 +440,14 @@ class BenchmarkHarness:
         if versions != {PIPELINE_VERSION}:
             raise PipelineContractError(f"Mismatched pipeline versions: {sorted(versions)}")
 
-    def run_suite(self, request: BenchmarkRequest) -> BenchmarkRun:
+    def run_suite(
+        self,
+        request: BenchmarkRequest,
+        *,
+        run_id: str | None = None,
+        job_id: str | None = None,
+    ) -> BenchmarkRun:
+        run_id = run_id or uuid.uuid4().hex
         manifest_path = Path(request.dataset_manifest_path).expanduser().resolve()
         test_manifest_path = (
             Path(request.external_test_manifest_path).expanduser().resolve()
@@ -500,7 +508,6 @@ class BenchmarkHarness:
             train_split=request.train_split,
         )
 
-        run_id = uuid.uuid4().hex
         artifacts = self._write_artifacts(
             run_id=run_id,
             manifest_path=manifest_path,
@@ -558,6 +565,7 @@ class BenchmarkHarness:
 
         run = BenchmarkRun(
             run_id=run_id,
+            job_id=job_id,
             dataset_version=(
                 manifest.dataset_version
                 if not external_validation
@@ -1061,4 +1069,13 @@ class BenchmarkHarness:
                 description="Structured manuscript draft generated from the benchmark evidence package.",
             )
         )
+        for artifact in artifacts:
+            self.storage.register_artifact(
+                RecordOwnerType.benchmark_run,
+                run_id,
+                name=artifact.name,
+                kind=artifact.kind,
+                path=artifact.path,
+                description=artifact.description,
+            )
         return artifacts

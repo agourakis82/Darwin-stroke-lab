@@ -1,0 +1,264 @@
+{
+  "$defs": {
+    "AblationResult": {
+      "properties": {
+        "ablation_name": {
+          "title": "Ablation Name",
+          "type": "string"
+        },
+        "interpretability_delta": {
+          "title": "Interpretability Delta",
+          "type": "number"
+        },
+        "metric_delta": {
+          "title": "Metric Delta",
+          "type": "number"
+        },
+        "notes": {
+          "title": "Notes",
+          "type": "string"
+        },
+        "removed_component": {
+          "title": "Removed Component",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ablation_name",
+        "removed_component",
+        "metric_delta",
+        "interpretability_delta",
+        "notes"
+      ],
+      "title": "AblationResult",
+      "type": "object"
+    },
+    "ArtifactDescriptor": {
+      "properties": {
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "kind",
+        "path"
+      ],
+      "title": "ArtifactDescriptor",
+      "type": "object"
+    },
+    "BenchmarkComparison": {
+      "properties": {
+        "against": {
+          "$ref": "#/$defs/ModelFamily"
+        },
+        "metrics": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ComparativeMetric"
+          },
+          "title": "Metrics",
+          "type": "object"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "against",
+        "metrics"
+      ],
+      "title": "BenchmarkComparison",
+      "type": "object"
+    },
+    "ComparativeMetric": {
+      "properties": {
+        "delta": {
+          "title": "Delta",
+          "type": "number"
+        },
+        "interpretation": {
+          "default": "",
+          "title": "Interpretation",
+          "type": "string"
+        },
+        "lower_ci": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lower Ci"
+        },
+        "p_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "P Value"
+        },
+        "upper_ci": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Upper Ci"
+        }
+      },
+      "required": [
+        "delta"
+      ],
+      "title": "ComparativeMetric",
+      "type": "object"
+    },
+    "LanguageStack": {
+      "enum": [
+        "sounio",
+        "python",
+        "julia",
+        "cpp",
+        "multi"
+      ],
+      "title": "LanguageStack",
+      "type": "string"
+    },
+    "ModelFamily": {
+      "enum": [
+        "sounio_hypercomplex",
+        "python_3d_conventional",
+        "julia_equivalent",
+        "cpp_equivalent",
+        "benchmark_suite"
+      ],
+      "title": "ModelFamily",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "ablations": {
+      "items": {
+        "$ref": "#/$defs/AblationResult"
+      },
+      "title": "Ablations",
+      "type": "array"
+    },
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/ArtifactDescriptor"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "comparisons": {
+      "additionalProperties": {
+        "$ref": "#/$defs/BenchmarkComparison"
+      },
+      "title": "Comparisons",
+      "type": "object"
+    },
+    "compute_budget": {
+      "additionalProperties": true,
+      "title": "Compute Budget",
+      "type": "object"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dataset_version": {
+      "title": "Dataset Version",
+      "type": "string"
+    },
+    "fairness_checks": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Fairness Checks",
+      "type": "array"
+    },
+    "job_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Job Id"
+    },
+    "language_stack": {
+      "$ref": "#/$defs/LanguageStack"
+    },
+    "leaderboard": {
+      "additionalProperties": true,
+      "title": "Leaderboard",
+      "type": "object"
+    },
+    "metrics": {
+      "additionalProperties": true,
+      "title": "Metrics",
+      "type": "object"
+    },
+    "model_family": {
+      "$ref": "#/$defs/ModelFamily"
+    },
+    "pipeline_version": {
+      "title": "Pipeline Version",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "stratified_metrics": {
+      "additionalProperties": true,
+      "title": "Stratified Metrics",
+      "type": "object"
+    }
+  },
+  "required": [
+    "run_id",
+    "dataset_version",
+    "pipeline_version",
+    "language_stack",
+    "model_family",
+    "compute_budget",
+    "metrics"
+  ],
+  "title": "BenchmarkRun",
+  "type": "object"
+}

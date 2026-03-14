@@ -1,0 +1,44 @@
+// ═══════════════════════════════════════════════════════════════════
+// self-hosted/lexer/span.sio — Source location tracking
+// ═══════════════════════════════════════════════════════════════════
+//
+// Spans track byte offsets into source files. Every token and AST node
+// carries a Span for error reporting and source mapping.
+
+/// Byte-range in a source file
+pub struct Span {
+    pub file_id: u32,
+    pub start: u32,
+    pub end: u32,
+}
+
+impl Span {
+    pub fn new(file_id: u32, start: u32, end: u32) -> Span {
+        Span { file_id: file_id, start: start, end: end }
+    }
+
+    pub fn dummy() -> Span {
+        Span { file_id: 0, start: 0, end: 0 }
+    }
+
+    /// Merge two spans into the smallest span covering both
+    pub fn merge(a: Span, b: Span) -> Span {
+        let s = if a.start < b.start { a.start } else { b.start }
+        let e = if a.end > b.end { a.end } else { b.end }
+        Span {
+            file_id: a.file_id,
+            start: s,
+            end: e,
+        }
+    }
+
+    /// Byte length of this span
+    pub fn len(self) -> u32 {
+        self.end - self.start
+    }
+
+    /// Whether a byte position falls within this span
+    pub fn contains(self, pos: u32) -> bool {
+        pos >= self.start && pos < self.end
+    }
+}

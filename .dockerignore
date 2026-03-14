@@ -1,0 +1,8 @@
+**
+!fsharp/
+!fsharp/**
+!sounio/
+!sounio/kernels/
+!sounio/kernels/**
+fsharp/cluster-sounio/source/target/
+fsharp/cluster-sounio/source/.git/

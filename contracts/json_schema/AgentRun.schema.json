@@ -1,0 +1,232 @@
+{
+  "$defs": {
+    "AgentRunStatus": {
+      "enum": [
+        "queued",
+        "running",
+        "completed",
+        "failed",
+        "cancelled"
+      ],
+      "title": "AgentRunStatus",
+      "type": "string"
+    },
+    "AgentSurface": {
+      "enum": [
+        "research",
+        "clinical",
+        "dual"
+      ],
+      "title": "AgentSurface",
+      "type": "string"
+    },
+    "AutonomyMode": {
+      "enum": [
+        "autonomous_lab"
+      ],
+      "title": "AutonomyMode",
+      "type": "string"
+    },
+    "PrivacyMode": {
+      "enum": [
+        "local_deidentified"
+      ],
+      "title": "PrivacyMode",
+      "type": "string"
+    },
+    "SafetyPolicy": {
+      "properties": {
+        "autonomy_mode": {
+          "$ref": "#/$defs/AutonomyMode",
+          "default": "autonomous_lab"
+        },
+        "local_tool_allowlist": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Local Tool Allowlist",
+          "type": "array"
+        },
+        "privacy_mode": {
+          "$ref": "#/$defs/PrivacyMode",
+          "default": "local_deidentified"
+        },
+        "public_tool_allowlist": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Public Tool Allowlist",
+          "type": "array"
+        },
+        "remote_tool_policy": {
+          "default": "public_only_deidentified",
+          "title": "Remote Tool Policy",
+          "type": "string"
+        },
+        "write_scope": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Write Scope",
+          "type": "array"
+        }
+      },
+      "title": "SafetyPolicy",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "artifact_paths": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Artifact Paths",
+      "type": "array"
+    },
+    "benchmark_run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Benchmark Run Id"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dataset_manifest_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dataset Manifest Path"
+    },
+    "error": {
+      "default": "",
+      "title": "Error",
+      "type": "string"
+    },
+    "external_test_manifest_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "External Test Manifest Path"
+    },
+    "final_output": {
+      "default": "",
+      "title": "Final Output",
+      "type": "string"
+    },
+    "job_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Job Id"
+    },
+    "objective": {
+      "title": "Objective",
+      "type": "string"
+    },
+    "request_payload": {
+      "additionalProperties": true,
+      "title": "Request Payload",
+      "type": "object"
+    },
+    "research_brief_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Research Brief Id"
+    },
+    "root_agent": {
+      "title": "Root Agent",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "safety_policy": {
+      "$ref": "#/$defs/SafetyPolicy"
+    },
+    "session_id": {
+      "title": "Session Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/AgentRunStatus"
+    },
+    "study_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Study Id"
+    },
+    "surface": {
+      "$ref": "#/$defs/AgentSurface"
+    },
+    "trace_id": {
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "run_id",
+    "objective",
+    "surface",
+    "status",
+    "root_agent",
+    "trace_id",
+    "session_id",
+    "safety_policy"
+  ],
+  "title": "AgentRun",
+  "type": "object"
+}

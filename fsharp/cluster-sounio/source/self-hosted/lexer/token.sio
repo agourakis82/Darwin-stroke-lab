@@ -1,0 +1,243 @@
+// ═══════════════════════════════════════════════════════════════════
+// self-hosted/lexer/token.sio — Token kinds, keywords, and Token type
+// ═══════════════════════════════════════════════════════════════════
+//
+// Defines all token kinds recognized by the Sounio lexer.
+// The TokenKind enum carries literal values inline (IntLit(i64), etc.)
+// so the parser can extract them without re-parsing text.
+
+use self.lexer.span.Span
+
+// ═══════════════════════════════════════════════════════════════════
+// KEYWORDS
+// ═══════════════════════════════════════════════════════════════════
+
+/// All reserved keywords in Sounio
+pub enum Keyword {
+    // Control flow
+    Fn, Let, Var, Mut, Const, Return, Break, Continue,
+    If, Else, Match, For, While, Loop,
+    // Type definitions
+    Struct, Enum, Trait, Impl, Type,
+    // Modifiers & access
+    Pub, Use, Import, Export, Module, With, As, In, Where,
+    // Values
+    True, False, SelfValue, SelfType, Super,
+    // Effects & ownership
+    Effect, Handler, Handle, Perform, Resume,
+    Async, Await, Spawn, Move, Copy, Drop,
+    Linear, Affine,
+    // Safety & contracts
+    Unsafe, Extern, Static,
+    Assert, Assume, Requires, Ensures, Invariant, Proof,
+    // Epistemic / scientific
+    Observe, Sample, Infer,
+    Kernel, Tile, Device, Shared, Gpu,
+    Ode, Pde, Causal,
+    Do, Query,
+    // Ontology
+    Ontology, From, Align, Distance, Threshold, Compat,
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TOKEN KIND
+// ═══════════════════════════════════════════════════════════════════
+
+/// Every distinct token the lexer can produce
+pub enum TokenKind {
+    // === Literals ===
+    IntLit(i64),
+    FloatLit(f64),
+    StringLit(String),
+    CharLit(i32),
+    BoolLit(bool),
+
+    // === Identifiers & Keywords ===
+    Ident(String),
+    Keyword(Keyword),
+
+    // === Single-char operators ===
+    Plus,           // +
+    Minus,          // -
+    Star,           // *
+    Slash,          // /
+    Percent,        // %
+    Eq,             // =
+    Lt,             // <
+    Gt,             // >
+    Bang,           // !
+    Ampersand,      // &
+    Pipe,           // |
+    Caret,          // ^
+    Tilde,          // ~
+    QuestionMark,   // ?
+    At,             // @
+    Hash,           // #
+    Dollar,         // $
+    Underscore,     // _
+
+    // === Multi-char operators ===
+    EqEq,           // ==
+    BangEq,         // !=
+    LtEq,           // <=
+    GtEq,           // >=
+    And,            // &&
+    Or,             // ||
+    Shl,            // <<
+    Shr,            // >>
+    PlusPlus,       // ++
+    PlusEq,         // +=
+    MinusEq,        // -=
+    StarEq,         // *=
+    SlashEq,        // /=
+    PercentEq,      // %=
+    AmpersandEq,    // &=
+    PipeEq,         // |=
+    CaretEq,        // ^=
+    ShlEq,          // <<=
+    ShrEq,          // >>=
+    Arrow,          // ->
+    FatArrow,       // =>
+    LeftArrow,      // <-
+    DotDot,         // ..
+    DotDotDot,      // ...
+    DotDotEq,       // ..=
+    ColonColon,     // ::
+    PlusMinus,      // +-
+
+    // === Delimiters ===
+    LParen,         // (
+    RParen,         // )
+    LBrace,         // {
+    RBrace,         // }
+    LBracket,       // [
+    RBracket,       // ]
+    Semi,           // ;
+    Colon,          // :
+    Comma,          // ,
+    Dot,            // .
+
+    // === Comments & Trivia ===
+    DocComment(String),
+    DocCommentInner(String),
+
+    // === Special ===
+    Eof,
+    Newline,
+    Error(String),
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TRIVIA (whitespace/comments attached to tokens)
+// ═══════════════════════════════════════════════════════════════════
+
+pub enum Trivia {
+    Whitespace(u32),
+    LineComment(String),
+    BlockComment(String),
+    Newline,
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TOKEN
+// ═══════════════════════════════════════════════════════════════════
+
+/// A token with its kind, source span, and leading trivia
+pub struct Token {
+    pub kind: TokenKind,
+    pub span: Span,
+    pub leading_trivia: Vec<Trivia>,
+}
+
+impl Token {
+    pub fn new(kind: TokenKind, span: Span) -> Token {
+        Token { kind: kind, span: span, leading_trivia: Vec::new() }
+    }
+
+    pub fn with_trivia(kind: TokenKind, span: Span, trivia: Vec<Trivia>) -> Token {
+        Token { kind: kind, span: span, leading_trivia: trivia }
+    }
+
+    pub fn is_eof(self) -> bool {
+        match self.kind {
+            TokenKind::Eof => true
+            _ => false
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TOKEN KIND QUERIES
+// ═══════════════════════════════════════════════════════════════════
+
+impl TokenKind {
+    pub fn is_operator(self) -> bool {
+        match self {
+            TokenKind::Plus | TokenKind::Minus | TokenKind::Star |
+            TokenKind::Slash | TokenKind::Percent | TokenKind::Eq |
+            TokenKind::EqEq | TokenKind::BangEq | TokenKind::Lt |
+            TokenKind::Gt | TokenKind::LtEq | TokenKind::GtEq |
+            TokenKind::And | TokenKind::Or | TokenKind::Bang |
+            TokenKind::Ampersand | TokenKind::Pipe | TokenKind::Caret |
+            TokenKind::Shl | TokenKind::Shr | TokenKind::PlusEq |
+            TokenKind::MinusEq | TokenKind::StarEq | TokenKind::SlashEq |
+            TokenKind::Arrow | TokenKind::FatArrow | TokenKind::DotDot |
+            TokenKind::DotDotEq | TokenKind::ColonColon |
+            TokenKind::QuestionMark | TokenKind::Tilde => true
+            _ => false
+        }
+    }
+
+    pub fn is_keyword(self) -> bool {
+        match self {
+            TokenKind::Keyword(_) => true
+            _ => false
+        }
+    }
+
+    pub fn is_literal(self) -> bool {
+        match self {
+            TokenKind::IntLit(_) | TokenKind::FloatLit(_) |
+            TokenKind::StringLit(_) | TokenKind::CharLit(_) |
+            TokenKind::BoolLit(_) => true
+            _ => false
+        }
+    }
+
+    /// Precedence for Pratt parsing (higher = tighter binding)
+    /// 0 = not an infix operator
+    pub fn precedence(self) -> i32 {
+        match self {
+            TokenKind::Eq | TokenKind::PlusEq | TokenKind::MinusEq |
+            TokenKind::StarEq | TokenKind::SlashEq |
+            TokenKind::PercentEq | TokenKind::AmpersandEq |
+            TokenKind::PipeEq | TokenKind::CaretEq |
+            TokenKind::ShlEq | TokenKind::ShrEq => 1
+            TokenKind::DotDot | TokenKind::DotDotEq => 2
+            TokenKind::Or => 3
+            TokenKind::And => 4
+            TokenKind::EqEq | TokenKind::BangEq | TokenKind::Lt |
+            TokenKind::Gt | TokenKind::LtEq | TokenKind::GtEq => 5
+            TokenKind::Tilde | TokenKind::PlusMinus => 6
+            TokenKind::Pipe => 7
+            TokenKind::Caret => 8
+            TokenKind::Ampersand => 9
+            TokenKind::Shl | TokenKind::Shr => 10
+            TokenKind::Plus | TokenKind::Minus => 11
+            TokenKind::Star | TokenKind::Slash | TokenKind::Percent => 12
+            _ => 0
+        }
+    }
+
+    /// Whether this operator is right-associative
+    pub fn is_right_assoc(self) -> bool {
+        match self {
+            TokenKind::Eq | TokenKind::PlusEq | TokenKind::MinusEq |
+            TokenKind::StarEq | TokenKind::SlashEq |
+            TokenKind::PercentEq | TokenKind::AmpersandEq |
+            TokenKind::PipeEq | TokenKind::CaretEq |
+            TokenKind::ShlEq | TokenKind::ShrEq => true
+            _ => false
+        }
+    }
+}

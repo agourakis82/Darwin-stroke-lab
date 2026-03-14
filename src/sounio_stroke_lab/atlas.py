@@ -65,7 +65,7 @@ def affected_regions_from_mask(mask: np.ndarray, hemisphere: str, threshold: flo
 def aspects_from_probability_map(
     probability_map: np.ndarray,
     hemisphere: str,
-    threshold: float = 0.45,
+    threshold: float = 0.42,
 ) -> tuple[int, list[RegionScore]]:
     overlaps = region_overlaps(probability_map, hemisphere)
     region_scores: list[RegionScore] = []

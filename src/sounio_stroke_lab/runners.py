@@ -8,7 +8,7 @@ import numpy as np
 from scipy.ndimage import gaussian_filter
 
 from sounio_stroke_lab.config import ATLAS_REGIONS, DEFAULT_TARGET_SHAPE, PIPELINE_VERSION
-from sounio_stroke_lab.features import extract_feature_maps, normalize_feature, region_feature_vectors
+from sounio_stroke_lab.features import extract_feature_maps, region_feature_vectors
 from sounio_stroke_lab.hypercomplex import logistic
 from sounio_stroke_lab.preprocessing import PreprocessedVolume
 from sounio_stroke_lab.schemas import LanguageStack, ModelFamily, TrainedModelArtifact
@@ -157,6 +157,26 @@ class SounioHypercomplexRunner(BaseRunner):
     model_family = ModelFamily.sounio_hypercomplex
 
     def _predict_without_artifact(self, preprocessed: PreprocessedVolume) -> np.ndarray:
+        runtime = SounioRuntime.auto()
+        if runtime is not None:
+            try:
+                result = runtime.infer_hypercomplex_heatmap(
+                    volume=preprocessed.volume,
+                    asymmetry=preprocessed.asymmetry,
+                    gradient=preprocessed.gradient,
+                    contrast=preprocessed.contrast,
+                    atlas=preprocessed.atlas,
+                    removed_component=self.removed_component,
+                )
+                self._last_notes.append(
+                    f"Sounio volumetric runtime core active via {runtime.souc_path} ({runtime.source})."
+                )
+                return result.heatmap
+            except Exception as exc:
+                self._last_notes.append(
+                    f"Sounio volumetric runtime failed ({exc}); using Python fallback analytic core."
+                )
+
         feature_maps = extract_feature_maps(preprocessed)
         deficit = feature_maps["deficit"]
         asymmetry = feature_maps["asymmetry"]
@@ -176,28 +196,45 @@ class SounioHypercomplexRunner(BaseRunner):
         if self.removed_component == "hypercomplex_energy":
             energy = np.zeros_like(energy)
 
-        region_scores = self._runtime_scores(preprocessed, deficit, asymmetry, smoothness, gradient_suppression)
-        if region_scores is None:
-            core_signal = (
-                2.4 * deficit * (0.2 + asymmetry)
-                + 1.0 * energy * (0.15 + asymmetry)
-                + 0.4 * coupling
-                + 0.2 * smoothness * asymmetry
-            )
-            signal = atlas_prior * core_signal + 0.08 * gradient_suppression * asymmetry
-            smoothed = gaussian_filter(signal, sigma=0.9)
-            return logistic(5.0 * (smoothed - 0.85))
-
-        region_map = _region_score_map(preprocessed, region_scores)
-        local_evidence = normalize_feature(
-            1.8 * deficit * (0.2 + asymmetry)
-            + 0.9 * energy * (0.15 + asymmetry)
-            + 0.35 * coupling
-            + 0.15 * smoothness * asymmetry
+        # Bridge cortical border zones where asymmetry is strong but focal deficit is partially diluted.
+        cortical_bridge = asymmetry * (1.0 - coupling) * (0.25 + smoothness)
+        core_signal = (
+            2.4 * deficit * (0.2 + asymmetry)
+            + 1.0 * energy * (0.15 + asymmetry)
+            + 0.4 * coupling
+            + 0.2 * smoothness * asymmetry
+            + 0.25 * cortical_bridge
         )
-        signal = region_map * (0.25 + local_evidence) + 0.06 * gradient_suppression * asymmetry
+        signal = atlas_prior * core_signal + 0.08 * gradient_suppression * asymmetry
         smoothed = gaussian_filter(signal, sigma=0.9)
-        return logistic(5.0 * (smoothed - 0.42))
+        return logistic(5.0 * (smoothed - 0.85))
+
+    def _predict_with_artifact(self, preprocessed: PreprocessedVolume) -> np.ndarray:
+        feature_maps = extract_feature_maps(preprocessed)
+        runtime = SounioRuntime.auto()
+        if runtime is not None:
+            try:
+                result = runtime.infer_artifact_heatmap(
+                    feature_maps=feature_maps,
+                    atlas=preprocessed.atlas,
+                    feature_names=self.model_artifact.feature_names,
+                    weights=self.model_artifact.weights,
+                    bias=self.model_artifact.bias,
+                    feature_mean=self.model_artifact.feature_mean,
+                    feature_std=self.model_artifact.feature_std,
+                )
+                self._last_notes.append(
+                    f"Sounio volumetric artifact core active via {runtime.souc_path} ({runtime.source})."
+                )
+                return result.heatmap
+            except Exception as exc:
+                self._last_notes.append(
+                    f"Sounio volumetric artifact inference failed ({exc}); using Python fallback analytic core."
+                )
+
+        rows = _artifact_feature_rows(preprocessed, feature_maps, self.model_artifact)
+        region_scores = self._artifact_region_scores(rows)
+        return _heatmap_from_artifact(preprocessed, feature_maps, self.model_artifact, region_scores)
 
     def _artifact_region_scores(self, rows: np.ndarray) -> list[float]:
         runtime = SounioRuntime.auto()
@@ -221,38 +258,6 @@ class SounioHypercomplexRunner(BaseRunner):
         except Exception as exc:
             self._last_notes.append(f"Sounio runtime artifact scoring failed ({exc}); using Python fallback scorer.")
             return super()._artifact_region_scores(rows)
-
-    def _runtime_scores(
-        self,
-        preprocessed: PreprocessedVolume,
-        deficit: np.ndarray,
-        asymmetry: np.ndarray,
-        smoothness: np.ndarray,
-        gradient_suppression: np.ndarray,
-    ) -> list[float] | None:
-        runtime = SounioRuntime.auto()
-        if runtime is None:
-            self._last_notes.append(
-                "Official GitHub Sounio runtime not detected or not at GitHub HEAD; using Python fallback scorer."
-            )
-            return None
-        try:
-            region_deficit = []
-            region_asymmetry = []
-            region_smoothness = []
-            region_gradient = []
-            for region_name in ATLAS_REGIONS:
-                mask = preprocessed.atlas[region_name]
-                region_deficit.append(float(deficit[mask].mean()))
-                region_asymmetry.append(float(asymmetry[mask].mean()))
-                region_smoothness.append(float(smoothness[mask].mean()))
-                region_gradient.append(float(gradient_suppression[mask].mean()))
-            scores = runtime.score_regions(region_deficit, region_asymmetry, region_smoothness, region_gradient)
-            self._last_notes.append(f"Sounio runtime scorer active via {runtime.souc_path} ({runtime.source}).")
-            return scores
-        except Exception as exc:
-            self._last_notes.append(f"Sounio runtime failed ({exc}); using Python fallback scorer.")
-            return None
 
     def _notes(self) -> list[str]:
         notes = super()._notes()

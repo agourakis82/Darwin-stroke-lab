@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+patches:
+  - target:
+      kind: ConfigMap
+      name: sounio-stroke-runtime
+    patch: |-
+      - op: replace
+        path: /data/SOUNIO_STROKE_MINIO_ENDPOINT
+        value: 192.168.3.225:19010
+      - op: replace
+        path: /data/SOUNIO_STROKE_K8S_WORKER_IMAGE
+        value: sounio-stroke-lab-worker:k3s-dev
+  - target:
+      kind: PersistentVolumeClaim
+      name: sounio-stroke-datasets
+    patch: |-
+      - op: replace
+        path: /spec/resources/requests/storage
+        value: 2Gi
+  - target:
+      kind: Deployment
+      name: sounio-stroke-api
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: sounio-stroke-lab-worker:k3s-dev
+      - op: add
+        path: /spec/template/spec/containers/0/ports/0/hostPort
+        value: 18080

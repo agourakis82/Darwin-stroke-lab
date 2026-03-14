@@ -1,0 +1,91 @@
+{
+  "$defs": {
+    "RecordOwnerType": {
+      "enum": [
+        "study",
+        "benchmark_run",
+        "agent_run",
+        "research_brief",
+        "campaign",
+        "portfolio",
+        "program"
+      ],
+      "title": "RecordOwnerType",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "artifact_id": {
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "bytes": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bytes"
+    },
+    "content_type": {
+      "default": "",
+      "title": "Content Type",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "description": {
+      "default": "",
+      "title": "Description",
+      "type": "string"
+    },
+    "kind": {
+      "title": "Kind",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "owner_id": {
+      "title": "Owner Id",
+      "type": "string"
+    },
+    "owner_type": {
+      "$ref": "#/$defs/RecordOwnerType"
+    },
+    "path": {
+      "default": "",
+      "title": "Path",
+      "type": "string"
+    },
+    "uri": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Uri"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "owner_type",
+    "owner_id",
+    "name",
+    "kind"
+  ],
+  "title": "ArtifactRef",
+  "type": "object"
+}

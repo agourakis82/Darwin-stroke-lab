@@ -1,0 +1,1727 @@
+{
+  "ablations": [
+    {
+      "ablation_name": "sounio_without_hypercomplex_phase",
+      "interpretability_delta": 0.0,
+      "metric_delta": 0.0,
+      "notes": "Positive deltas mean the removed component hurts the trained Sounio arm.",
+      "removed_component": "hypercomplex_phase"
+    },
+    {
+      "ablation_name": "sounio_without_hypercomplex_energy",
+      "interpretability_delta": 0.0,
+      "metric_delta": 0.0,
+      "notes": "Positive deltas mean the removed component hurts the trained Sounio arm.",
+      "removed_component": "hypercomplex_energy"
+    },
+    {
+      "ablation_name": "sounio_without_asymmetry_channel",
+      "interpretability_delta": 0.0,
+      "metric_delta": 0.0,
+      "notes": "Positive deltas mean the removed component hurts the trained Sounio arm.",
+      "removed_component": "asymmetry_channel"
+    }
+  ],
+  "artifacts": [
+    {
+      "description": "Training manifest and explicit training case list used for this run.",
+      "kind": "json",
+      "name": "train_manifest",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/train_manifest.json"
+    },
+    {
+      "description": "Test manifest and explicit test case list used for this run.",
+      "kind": "json",
+      "name": "test_manifest",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/test_manifest.json"
+    },
+    {
+      "description": "Structured study protocol with dataset provenance, metrics and statistical plan.",
+      "kind": "json",
+      "name": "research_protocol",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/research_protocol.json"
+    },
+    {
+      "description": "Environment, package, git and Sounio runtime snapshot for exact run reproduction.",
+      "kind": "json",
+      "name": "reproducibility_snapshot",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/reproducibility_snapshot.json"
+    },
+    {
+      "description": "Operational CLAIM-aligned reporting audit for the current benchmark run.",
+      "kind": "json",
+      "name": "claim_checklist",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/claim_checklist.json"
+    },
+    {
+      "description": "Operational TRIPOD-AI-aligned reporting audit for the current benchmark run.",
+      "kind": "json",
+      "name": "tripod_ai_checklist",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/tripod_ai_checklist.json"
+    },
+    {
+      "description": "Per-case benchmark outputs for every arm, suitable for audit and secondary analysis.",
+      "kind": "csv",
+      "name": "case_level_predictions",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/case_level_predictions.csv"
+    },
+    {
+      "description": "Paired statistical comparison between Sounio and each baseline arm.",
+      "kind": "json",
+      "name": "pairwise_comparisons",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/comparisons.json"
+    },
+    {
+      "description": "Metrics stratified by lesion presence, hemisphere and ASPECTS severity bucket.",
+      "kind": "json",
+      "name": "stratified_metrics",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/stratified_metrics.json"
+    },
+    {
+      "description": "Composite ranking across core segmentation and ASPECTS metrics.",
+      "kind": "json",
+      "name": "leaderboard",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/leaderboard.json"
+    },
+    {
+      "description": "Summary of the training cohort composition, metadata coverage and modality availability.",
+      "kind": "json",
+      "name": "training_cohort_summary",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/training_cohort_summary.json"
+    },
+    {
+      "description": "Summary of the test cohort composition, metadata coverage and modality availability.",
+      "kind": "json",
+      "name": "test_cohort_summary",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/test_cohort_summary.json"
+    },
+    {
+      "description": "High-level train-vs-test cohort shift summary for external or internal validation.",
+      "kind": "json",
+      "name": "cohort_shift",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/cohort_shift.json"
+    },
+    {
+      "description": "Worst cases per arm and largest Sounio-vs-baseline disagreements.",
+      "kind": "json",
+      "name": "failure_analysis",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/failure_analysis.json"
+    },
+    {
+      "description": "Summary figure comparing ASPECTS MAE, AUC and Dice across benchmark arms.",
+      "kind": "png",
+      "name": "benchmark_summary",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/benchmark_summary.png"
+    },
+    {
+      "description": "Region-level calibration curves for all benchmark arms.",
+      "kind": "png",
+      "name": "calibration_curves",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/calibration_curves.png"
+    },
+    {
+      "description": "Pairwise AUC gain confidence intervals for Sounio versus each baseline.",
+      "kind": "png",
+      "name": "effect_sizes",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/effect_sizes.png"
+    },
+    {
+      "description": "Fitted sounio_hypercomplex artifact used for test-set evaluation.",
+      "kind": "trained-model",
+      "name": "model_sounio_hypercomplex",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/models/sounio_hypercomplex.json"
+    },
+    {
+      "description": "Fitted python_3d_conventional artifact used for test-set evaluation.",
+      "kind": "trained-model",
+      "name": "model_python_3d_conventional",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/models/python_3d_conventional.json"
+    },
+    {
+      "description": "Fitted julia_equivalent artifact used for test-set evaluation.",
+      "kind": "trained-model",
+      "name": "model_julia_equivalent",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/models/julia_equivalent.json"
+    },
+    {
+      "description": "Fitted cpp_equivalent artifact used for test-set evaluation.",
+      "kind": "trained-model",
+      "name": "model_cpp_equivalent",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/models/cpp_equivalent.json"
+    },
+    {
+      "description": "Fitted Sounio ablation artifact with hypercomplex_phase removed.",
+      "kind": "trained-model-ablation",
+      "name": "ablation_hypercomplex_phase",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/ablations/hypercomplex_phase.json"
+    },
+    {
+      "description": "Fitted Sounio ablation artifact with hypercomplex_energy removed.",
+      "kind": "trained-model-ablation",
+      "name": "ablation_hypercomplex_energy",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/ablations/hypercomplex_energy.json"
+    },
+    {
+      "description": "Fitted Sounio ablation artifact with asymmetry_channel removed.",
+      "kind": "trained-model-ablation",
+      "name": "ablation_asymmetry_channel",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/ablations/asymmetry_channel.json"
+    },
+    {
+      "description": "Sounio strong case example for qualitative review.",
+      "kind": "png",
+      "name": "strong_case",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/strong_case.png"
+    },
+    {
+      "description": "Sounio weak case example for qualitative review.",
+      "kind": "png",
+      "name": "weak_case",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/weak_case.png"
+    },
+    {
+      "description": "Paper-style summary of the benchmark evidence.",
+      "kind": "markdown",
+      "name": "technical_report",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/report.md"
+    },
+    {
+      "description": "Structured manuscript draft generated from the benchmark evidence package.",
+      "kind": "markdown",
+      "name": "manuscript_draft",
+      "path": "<snapshot_root>/artifacts/6a5d11c937cc404caacd502c6062fb27/manuscript_draft.md"
+    }
+  ],
+  "comparisons": {
+    "cpp_equivalent": {
+      "against": "cpp_equivalent",
+      "metrics": {
+        "aspects_mae_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means lower ASPECTS MAE for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "auc_gain": {
+          "delta": -1.0,
+          "interpretation": "Positive delta means higher case-level AUC for Sounio.",
+          "lower_ci": -1.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "coherence_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means higher lesion/heatmap overlap for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "dice_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means higher ISLES-style Dice for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "lesion_count_difference_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means lower absolute lesion count difference for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "lesionwise_f1_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means higher lesion-wise F1 for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "volume_difference_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means lower absolute lesion volume difference for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        }
+      },
+      "notes": [
+        "Paired bootstrap CI and paired permutation p-value computed on the fixed test split."
+      ]
+    },
+    "julia_equivalent": {
+      "against": "julia_equivalent",
+      "metrics": {
+        "aspects_mae_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means lower ASPECTS MAE for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "auc_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means higher case-level AUC for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "coherence_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means higher lesion/heatmap overlap for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "dice_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means higher ISLES-style Dice for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "lesion_count_difference_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means lower absolute lesion count difference for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "lesionwise_f1_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means higher lesion-wise F1 for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "volume_difference_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means lower absolute lesion volume difference for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        }
+      },
+      "notes": [
+        "Paired bootstrap CI and paired permutation p-value computed on the fixed test split."
+      ]
+    },
+    "python_3d_conventional": {
+      "against": "python_3d_conventional",
+      "metrics": {
+        "aspects_mae_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means lower ASPECTS MAE for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "auc_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means higher case-level AUC for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "coherence_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means higher lesion/heatmap overlap for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "dice_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means higher ISLES-style Dice for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "lesion_count_difference_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means lower absolute lesion count difference for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "lesionwise_f1_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means higher lesion-wise F1 for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        },
+        "volume_difference_gain": {
+          "delta": 0.0,
+          "interpretation": "Positive delta means lower absolute lesion volume difference for Sounio.",
+          "lower_ci": 0.0,
+          "p_value": 1.0,
+          "upper_ci": 0.0
+        }
+      },
+      "notes": [
+        "Paired bootstrap CI and paired permutation p-value computed on the fixed test split."
+      ]
+    }
+  },
+  "compute_budget": {
+    "budget_profile": "matched-v1",
+    "dataset_manifest_path": "/private<snapshot_root>/fixtures/small_benchmark_manifest.json",
+    "device": "cpu",
+    "external_validation": false,
+    "test_cases": 2,
+    "test_manifest_path": "/private<snapshot_root>/fixtures/small_benchmark_manifest.json",
+    "train_cases": 4
+  },
+  "created_at": "<created_at>",
+  "dataset_version": "fixture-mini-v1",
+  "fairness_checks": [
+    "Training manifest: /private<snapshot_root>/fixtures/small_benchmark_manifest.json",
+    "Test manifest: /private<snapshot_root>/fixtures/small_benchmark_manifest.json",
+    "Training split: train",
+    "Test split: test",
+    "Training cases: 4",
+    "Test cases: 2",
+    "Training and test case ids are disjoint.",
+    "All runners were trained on the same manifest and training split.",
+    "All runners were evaluated on the same explicit test case list.",
+    "All runners use the same preprocess pipeline version.",
+    "All runners use the same atlas registration contract.",
+    "All runners use the same fixed compute budget profile.",
+    "same splits, same preprocessing, same atlas registration, same compute budget; only representation/model stack changes"
+  ],
+  "job_id": "<job_id>",
+  "language_stack": "multi",
+  "leaderboard": {
+    "mean_rank": {
+      "cpp_equivalent": 3.5,
+      "julia_equivalent": 3.1667,
+      "python_3d_conventional": 2.1667,
+      "sounio_hypercomplex": 1.1667
+    },
+    "metric_rankings": {
+      "aspects_mae": {
+        "cpp_equivalent": 4,
+        "julia_equivalent": 3,
+        "python_3d_conventional": 2,
+        "sounio_hypercomplex": 1
+      },
+      "auc": {
+        "cpp_equivalent": 1,
+        "julia_equivalent": 4,
+        "python_3d_conventional": 3,
+        "sounio_hypercomplex": 2
+      },
+      "isles_absolute_lesion_count_difference": {
+        "cpp_equivalent": 4,
+        "julia_equivalent": 3,
+        "python_3d_conventional": 2,
+        "sounio_hypercomplex": 1
+      },
+      "isles_absolute_volume_difference_ml": {
+        "cpp_equivalent": 4,
+        "julia_equivalent": 3,
+        "python_3d_conventional": 2,
+        "sounio_hypercomplex": 1
+      },
+      "isles_dice": {
+        "cpp_equivalent": 4,
+        "julia_equivalent": 3,
+        "python_3d_conventional": 2,
+        "sounio_hypercomplex": 1
+      },
+      "isles_lesionwise_f1": {
+        "cpp_equivalent": 4,
+        "julia_equivalent": 3,
+        "python_3d_conventional": 2,
+        "sounio_hypercomplex": 1
+      }
+    },
+    "overall_rank": [
+      {
+        "mean_rank": 1.1667,
+        "model_name": "sounio_hypercomplex",
+        "rank": 1
+      },
+      {
+        "mean_rank": 2.1667,
+        "model_name": "python_3d_conventional",
+        "rank": 2
+      },
+      {
+        "mean_rank": 3.1667,
+        "model_name": "julia_equivalent",
+        "rank": 3
+      },
+      {
+        "mean_rank": 3.5,
+        "model_name": "cpp_equivalent",
+        "rank": 4
+      }
+    ]
+  },
+  "metrics": {
+    "cpp_equivalent": {
+      "aspects_mae": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "auc": {
+        "lower_ci": 0.5,
+        "upper_ci": 1.0,
+        "value": 1.0
+      },
+      "interpretability_coherence": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "isles_absolute_lesion_count_difference": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "isles_absolute_volume_difference_ml": {
+        "lower_ci": 0.0,
+        "upper_ci": 1792.0,
+        "value": 896.0
+      },
+      "isles_dice": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "isles_lesionwise_f1": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "mean_latency_ms": {
+        "lower_ci": 11.001,
+        "upper_ci": 11.623,
+        "value": 11.312
+      },
+      "region_calibration_error": {
+        "lower_ci": 0.0184,
+        "upper_ci": 0.0677,
+        "value": 0.0184
+      },
+      "region_sensitivity": {
+        "lower_ci": 0.0,
+        "upper_ci": 0.0,
+        "value": 0.0
+      }
+    },
+    "julia_equivalent": {
+      "aspects_mae": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "auc": {
+        "lower_ci": 0.0,
+        "upper_ci": 0.5,
+        "value": 0.0
+      },
+      "interpretability_coherence": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "isles_absolute_lesion_count_difference": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "isles_absolute_volume_difference_ml": {
+        "lower_ci": 0.0,
+        "upper_ci": 1792.0,
+        "value": 896.0
+      },
+      "isles_dice": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "isles_lesionwise_f1": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "mean_latency_ms": {
+        "lower_ci": 10.673,
+        "upper_ci": 12.043,
+        "value": 11.358
+      },
+      "region_calibration_error": {
+        "lower_ci": 0.0237,
+        "upper_ci": 0.0743,
+        "value": 0.0237
+      },
+      "region_sensitivity": {
+        "lower_ci": 0.0,
+        "upper_ci": 0.0,
+        "value": 0.0
+      }
+    },
+    "python_3d_conventional": {
+      "aspects_mae": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "auc": {
+        "lower_ci": 0.0,
+        "upper_ci": 0.5,
+        "value": 0.0
+      },
+      "interpretability_coherence": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "isles_absolute_lesion_count_difference": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "isles_absolute_volume_difference_ml": {
+        "lower_ci": 0.0,
+        "upper_ci": 1792.0,
+        "value": 896.0
+      },
+      "isles_dice": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "isles_lesionwise_f1": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "mean_latency_ms": {
+        "lower_ci": 10.738,
+        "upper_ci": 12.22,
+        "value": 11.479
+      },
+      "region_calibration_error": {
+        "lower_ci": 0.0319,
+        "upper_ci": 0.0794,
+        "value": 0.0319
+      },
+      "region_sensitivity": {
+        "lower_ci": 0.0,
+        "upper_ci": 0.0,
+        "value": 0.0
+      }
+    },
+    "sounio_hypercomplex": {
+      "aspects_mae": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "auc": {
+        "lower_ci": 0.0,
+        "upper_ci": 0.5,
+        "value": 0.0
+      },
+      "interpretability_coherence": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "isles_absolute_lesion_count_difference": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "isles_absolute_volume_difference_ml": {
+        "lower_ci": 0.0,
+        "upper_ci": 1792.0,
+        "value": 896.0
+      },
+      "isles_dice": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "isles_lesionwise_f1": {
+        "lower_ci": 0.0,
+        "upper_ci": 1.0,
+        "value": 0.5
+      },
+      "mean_latency_ms": {
+        "lower_ci": 11.234,
+        "upper_ci": 12.207,
+        "value": 11.7205
+      },
+      "region_calibration_error": {
+        "lower_ci": 0.0323,
+        "upper_ci": 0.0744,
+        "value": 0.0323
+      },
+      "region_sensitivity": {
+        "lower_ci": 0.0,
+        "upper_ci": 0.0,
+        "value": 0.0
+      }
+    }
+  },
+  "model_family": "benchmark_suite",
+  "pipeline_version": "common-preprocess-v1",
+  "run_id": "<run_id>",
+  "stratified_metrics": {
+    "cpp_equivalent": {
+      "left_hemisphere": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1792.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 11.623
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0677
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      },
+      "lesion_present": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1792.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 11.623
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0677
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      },
+      "mild_8_10": {
+        "aspects_mae": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "auc": {
+          "lower_ci": 0.5,
+          "upper_ci": 1.0,
+          "value": 1.0
+        },
+        "interpretability_coherence": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": 0.0,
+          "upper_ci": 1792.0,
+          "value": 896.0
+        },
+        "isles_dice": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "mean_latency_ms": {
+          "lower_ci": 11.001,
+          "upper_ci": 11.623,
+          "value": 11.312
+        },
+        "region_calibration_error": {
+          "lower_ci": 0.0184,
+          "upper_ci": 0.0677,
+          "value": 0.0184
+        },
+        "region_sensitivity": {
+          "lower_ci": 0.0,
+          "upper_ci": 0.0,
+          "value": 0.0
+        }
+      },
+      "no_lesion": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 11.001
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0547
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      },
+      "right_hemisphere": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 11.001
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0547
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      }
+    },
+    "julia_equivalent": {
+      "left_hemisphere": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1792.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 12.043
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0565
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      },
+      "lesion_present": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1792.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 12.043
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0565
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      },
+      "mild_8_10": {
+        "aspects_mae": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "auc": {
+          "lower_ci": 0.0,
+          "upper_ci": 0.5,
+          "value": 0.0
+        },
+        "interpretability_coherence": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": 0.0,
+          "upper_ci": 1792.0,
+          "value": 896.0
+        },
+        "isles_dice": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "mean_latency_ms": {
+          "lower_ci": 10.673,
+          "upper_ci": 12.043,
+          "value": 11.358
+        },
+        "region_calibration_error": {
+          "lower_ci": 0.0237,
+          "upper_ci": 0.0743,
+          "value": 0.0237
+        },
+        "region_sensitivity": {
+          "lower_ci": 0.0,
+          "upper_ci": 0.0,
+          "value": 0.0
+        }
+      },
+      "no_lesion": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 10.673
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0743
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      },
+      "right_hemisphere": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 10.673
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0743
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      }
+    },
+    "python_3d_conventional": {
+      "left_hemisphere": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1792.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 12.22
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0509
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      },
+      "lesion_present": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1792.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 12.22
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0509
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      },
+      "mild_8_10": {
+        "aspects_mae": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "auc": {
+          "lower_ci": 0.0,
+          "upper_ci": 0.5,
+          "value": 0.0
+        },
+        "interpretability_coherence": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": 0.0,
+          "upper_ci": 1792.0,
+          "value": 896.0
+        },
+        "isles_dice": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "mean_latency_ms": {
+          "lower_ci": 10.738,
+          "upper_ci": 12.22,
+          "value": 11.479
+        },
+        "region_calibration_error": {
+          "lower_ci": 0.0319,
+          "upper_ci": 0.0794,
+          "value": 0.0319
+        },
+        "region_sensitivity": {
+          "lower_ci": 0.0,
+          "upper_ci": 0.0,
+          "value": 0.0
+        }
+      },
+      "no_lesion": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 10.738
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0794
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      },
+      "right_hemisphere": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 10.738
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0794
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      }
+    },
+    "sounio_hypercomplex": {
+      "left_hemisphere": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1792.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 12.207
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0551
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      },
+      "lesion_present": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1792.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 12.207
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0551
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      },
+      "mild_8_10": {
+        "aspects_mae": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "auc": {
+          "lower_ci": 0.0,
+          "upper_ci": 0.5,
+          "value": 0.0
+        },
+        "interpretability_coherence": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": 0.0,
+          "upper_ci": 1792.0,
+          "value": 896.0
+        },
+        "isles_dice": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": 0.0,
+          "upper_ci": 1.0,
+          "value": 0.5
+        },
+        "mean_latency_ms": {
+          "lower_ci": 11.234,
+          "upper_ci": 12.207,
+          "value": 11.7205
+        },
+        "region_calibration_error": {
+          "lower_ci": 0.0323,
+          "upper_ci": 0.0744,
+          "value": 0.0323
+        },
+        "region_sensitivity": {
+          "lower_ci": 0.0,
+          "upper_ci": 0.0,
+          "value": 0.0
+        }
+      },
+      "no_lesion": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 11.234
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0744
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      },
+      "right_hemisphere": {
+        "aspects_mae": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "auc": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.5
+        },
+        "interpretability_coherence": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_absolute_lesion_count_difference": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_absolute_volume_difference_ml": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        },
+        "isles_dice": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "isles_lesionwise_f1": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 1.0
+        },
+        "mean_latency_ms": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 11.234
+        },
+        "region_calibration_error": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0744
+        },
+        "region_sensitivity": {
+          "lower_ci": null,
+          "upper_ci": null,
+          "value": 0.0
+        }
+      }
+    }
+  }
+}

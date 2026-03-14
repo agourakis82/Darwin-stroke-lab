@@ -1,0 +1,3796 @@
+{
+  "components": {
+    "schemas": {
+      "AblationResult": {
+        "properties": {
+          "ablation_name": {
+            "title": "Ablation Name",
+            "type": "string"
+          },
+          "interpretability_delta": {
+            "title": "Interpretability Delta",
+            "type": "number"
+          },
+          "metric_delta": {
+            "title": "Metric Delta",
+            "type": "number"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "removed_component": {
+            "title": "Removed Component",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ablation_name",
+          "removed_component",
+          "metric_delta",
+          "interpretability_delta",
+          "notes"
+        ],
+        "title": "AblationResult",
+        "type": "object"
+      },
+      "AgentRun": {
+        "properties": {
+          "artifact_paths": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Artifact Paths",
+            "type": "array"
+          },
+          "benchmark_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Benchmark Run Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "dataset_manifest_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Manifest Path"
+          },
+          "error": {
+            "default": "",
+            "title": "Error",
+            "type": "string"
+          },
+          "external_test_manifest_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Test Manifest Path"
+          },
+          "final_output": {
+            "default": "",
+            "title": "Final Output",
+            "type": "string"
+          },
+          "job_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Id"
+          },
+          "objective": {
+            "title": "Objective",
+            "type": "string"
+          },
+          "request_payload": {
+            "additionalProperties": true,
+            "title": "Request Payload",
+            "type": "object"
+          },
+          "research_brief_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Research Brief Id"
+          },
+          "root_agent": {
+            "title": "Root Agent",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "safety_policy": {
+            "$ref": "#/components/schemas/SafetyPolicy"
+          },
+          "session_id": {
+            "title": "Session Id",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AgentRunStatus"
+          },
+          "study_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Id"
+          },
+          "surface": {
+            "$ref": "#/components/schemas/AgentSurface"
+          },
+          "trace_id": {
+            "title": "Trace Id",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "run_id",
+          "objective",
+          "surface",
+          "status",
+          "root_agent",
+          "trace_id",
+          "session_id",
+          "safety_policy"
+        ],
+        "title": "AgentRun",
+        "type": "object"
+      },
+      "AgentRunRequest": {
+        "properties": {
+          "dataset_manifest_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Manifest Path"
+          },
+          "external_test_manifest_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Test Manifest Path"
+          },
+          "include_baseline_comparison": {
+            "default": true,
+            "title": "Include Baseline Comparison",
+            "type": "boolean"
+          },
+          "model_family": {
+            "$ref": "#/components/schemas/ModelFamily",
+            "default": "sounio_hypercomplex"
+          },
+          "notes": {
+            "default": "",
+            "title": "Notes",
+            "type": "string"
+          },
+          "objective": {
+            "title": "Objective",
+            "type": "string"
+          },
+          "research_question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Research Question"
+          },
+          "seed": {
+            "default": 13,
+            "title": "Seed",
+            "type": "integer"
+          },
+          "study_file_paths": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Study File Paths",
+            "type": "array"
+          },
+          "study_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Id"
+          },
+          "surface": {
+            "$ref": "#/components/schemas/AgentSurface",
+            "default": "dual"
+          },
+          "test_split": {
+            "default": "test",
+            "title": "Test Split",
+            "type": "string"
+          },
+          "train_split": {
+            "default": "train",
+            "title": "Train Split",
+            "type": "string"
+          }
+        },
+        "required": [
+          "objective"
+        ],
+        "title": "AgentRunRequest",
+        "type": "object"
+      },
+      "AgentRunStatus": {
+        "enum": [
+          "queued",
+          "running",
+          "completed",
+          "failed",
+          "cancelled"
+        ],
+        "title": "AgentRunStatus",
+        "type": "string"
+      },
+      "AgentSurface": {
+        "enum": [
+          "research",
+          "clinical",
+          "dual"
+        ],
+        "title": "AgentSurface",
+        "type": "string"
+      },
+      "AnalysisResult": {
+        "properties": {
+          "aspects_score": {
+            "title": "Aspects Score",
+            "type": "integer"
+          },
+          "baseline_comparison": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baseline Comparison"
+          },
+          "benchmark_context": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BenchmarkContext"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "global_confidence": {
+            "title": "Global Confidence",
+            "type": "number"
+          },
+          "heatmap_volume_ref": {
+            "title": "Heatmap Volume Ref",
+            "type": "string"
+          },
+          "input_mode": {
+            "$ref": "#/components/schemas/InputMode"
+          },
+          "model_family": {
+            "$ref": "#/components/schemas/ModelFamily"
+          },
+          "region_scores": {
+            "items": {
+              "$ref": "#/components/schemas/RegionScore"
+            },
+            "title": "Region Scores",
+            "type": "array"
+          },
+          "study_id": {
+            "title": "Study Id",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "study_id",
+          "model_family",
+          "input_mode",
+          "aspects_score",
+          "region_scores",
+          "global_confidence",
+          "heatmap_volume_ref"
+        ],
+        "title": "AnalysisResult",
+        "type": "object"
+      },
+      "AnalyzeStudyRequest": {
+        "properties": {
+          "include_baseline_comparison": {
+            "default": true,
+            "title": "Include Baseline Comparison",
+            "type": "boolean"
+          },
+          "model_artifact_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Artifact Path"
+          },
+          "model_family": {
+            "$ref": "#/components/schemas/ModelFamily",
+            "default": "sounio_hypercomplex"
+          }
+        },
+        "title": "AnalyzeStudyRequest",
+        "type": "object"
+      },
+      "ArtifactDescriptor": {
+        "properties": {
+          "description": {
+            "default": "",
+            "title": "Description",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "path"
+        ],
+        "title": "ArtifactDescriptor",
+        "type": "object"
+      },
+      "ArtifactRef": {
+        "properties": {
+          "artifact_id": {
+            "title": "Artifact Id",
+            "type": "string"
+          },
+          "bytes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bytes"
+          },
+          "content_type": {
+            "default": "",
+            "title": "Content Type",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "description": {
+            "default": "",
+            "title": "Description",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "owner_id": {
+            "title": "Owner Id",
+            "type": "string"
+          },
+          "owner_type": {
+            "$ref": "#/components/schemas/RecordOwnerType"
+          },
+          "path": {
+            "default": "",
+            "title": "Path",
+            "type": "string"
+          },
+          "uri": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uri"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "owner_type",
+          "owner_id",
+          "name",
+          "kind"
+        ],
+        "title": "ArtifactRef",
+        "type": "object"
+      },
+      "AutonomyMode": {
+        "enum": [
+          "autonomous_lab"
+        ],
+        "title": "AutonomyMode",
+        "type": "string"
+      },
+      "BenchmarkComparison": {
+        "properties": {
+          "against": {
+            "$ref": "#/components/schemas/ModelFamily"
+          },
+          "metrics": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ComparativeMetric"
+            },
+            "title": "Metrics",
+            "type": "object"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "against",
+          "metrics"
+        ],
+        "title": "BenchmarkComparison",
+        "type": "object"
+      },
+      "BenchmarkContext": {
+        "properties": {
+          "compared_against": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Compared Against",
+            "type": "array"
+          },
+          "compute_budget": {
+            "additionalProperties": true,
+            "title": "Compute Budget",
+            "type": "object"
+          },
+          "dataset_version": {
+            "title": "Dataset Version",
+            "type": "string"
+          },
+          "fairness_policy": {
+            "title": "Fairness Policy",
+            "type": "string"
+          },
+          "language_stack": {
+            "$ref": "#/components/schemas/LanguageStack"
+          },
+          "pipeline_version": {
+            "title": "Pipeline Version",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "dataset_version",
+          "pipeline_version",
+          "language_stack",
+          "fairness_policy",
+          "compute_budget"
+        ],
+        "title": "BenchmarkContext",
+        "type": "object"
+      },
+      "BenchmarkRequest": {
+        "properties": {
+          "dataset_manifest_path": {
+            "title": "Dataset Manifest Path",
+            "type": "string"
+          },
+          "external_test_manifest_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Test Manifest Path"
+          },
+          "seed": {
+            "default": 13,
+            "title": "Seed",
+            "type": "integer"
+          },
+          "test_split": {
+            "default": "test",
+            "title": "Test Split",
+            "type": "string"
+          },
+          "train_split": {
+            "default": "train",
+            "title": "Train Split",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dataset_manifest_path"
+        ],
+        "title": "BenchmarkRequest",
+        "type": "object"
+      },
+      "BenchmarkRun": {
+        "properties": {
+          "ablations": {
+            "items": {
+              "$ref": "#/components/schemas/AblationResult"
+            },
+            "title": "Ablations",
+            "type": "array"
+          },
+          "artifacts": {
+            "items": {
+              "$ref": "#/components/schemas/ArtifactDescriptor"
+            },
+            "title": "Artifacts",
+            "type": "array"
+          },
+          "comparisons": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/BenchmarkComparison"
+            },
+            "title": "Comparisons",
+            "type": "object"
+          },
+          "compute_budget": {
+            "additionalProperties": true,
+            "title": "Compute Budget",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "dataset_version": {
+            "title": "Dataset Version",
+            "type": "string"
+          },
+          "fairness_checks": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Fairness Checks",
+            "type": "array"
+          },
+          "job_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Id"
+          },
+          "language_stack": {
+            "$ref": "#/components/schemas/LanguageStack"
+          },
+          "leaderboard": {
+            "additionalProperties": true,
+            "title": "Leaderboard",
+            "type": "object"
+          },
+          "metrics": {
+            "additionalProperties": true,
+            "title": "Metrics",
+            "type": "object"
+          },
+          "model_family": {
+            "$ref": "#/components/schemas/ModelFamily"
+          },
+          "pipeline_version": {
+            "title": "Pipeline Version",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "stratified_metrics": {
+            "additionalProperties": true,
+            "title": "Stratified Metrics",
+            "type": "object"
+          }
+        },
+        "required": [
+          "run_id",
+          "dataset_version",
+          "pipeline_version",
+          "language_stack",
+          "model_family",
+          "compute_budget",
+          "metrics"
+        ],
+        "title": "BenchmarkRun",
+        "type": "object"
+      },
+      "Body_create_study_studies_post": {
+        "properties": {
+          "files": {
+            "items": {
+              "contentMediaType": "application/octet-stream",
+              "type": "string"
+            },
+            "title": "Files",
+            "type": "array"
+          }
+        },
+        "required": [
+          "files"
+        ],
+        "title": "Body_create_study_studies_post",
+        "type": "object"
+      },
+      "CampaignBenchmarkSpec": {
+        "properties": {
+          "label": {
+            "default": "",
+            "title": "Label",
+            "type": "string"
+          },
+          "request": {
+            "$ref": "#/components/schemas/BenchmarkRequest"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "CampaignBenchmarkSpec",
+        "type": "object"
+      },
+      "CampaignEntry": {
+        "properties": {
+          "benchmark_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Benchmark Run Id"
+          },
+          "entry_id": {
+            "title": "Entry Id",
+            "type": "string"
+          },
+          "error": {
+            "default": "",
+            "title": "Error",
+            "type": "string"
+          },
+          "job_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Id"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "request": {
+            "$ref": "#/components/schemas/BenchmarkRequest"
+          },
+          "status": {
+            "$ref": "#/components/schemas/JobStatus",
+            "default": "queued"
+          }
+        },
+        "required": [
+          "entry_id",
+          "label",
+          "request"
+        ],
+        "title": "CampaignEntry",
+        "type": "object"
+      },
+      "CampaignExperimentPlan": {
+        "properties": {
+          "benchmark_specs": {
+            "items": {
+              "$ref": "#/components/schemas/CampaignBenchmarkSpec"
+            },
+            "title": "Benchmark Specs",
+            "type": "array"
+          },
+          "hypothesis": {
+            "title": "Hypothesis",
+            "type": "string"
+          },
+          "plan_id": {
+            "title": "Plan Id",
+            "type": "string"
+          },
+          "rationale": {
+            "default": "",
+            "title": "Rationale",
+            "type": "string"
+          },
+          "recommended_agent_request": {
+            "additionalProperties": true,
+            "title": "Recommended Agent Request",
+            "type": "object"
+          },
+          "required_baselines": {
+            "items": {
+              "$ref": "#/components/schemas/ModelFamily"
+            },
+            "title": "Required Baselines",
+            "type": "array"
+          },
+          "success_criteria": {
+            "items": {
+              "$ref": "#/components/schemas/ExperimentSuccessCriterion"
+            },
+            "title": "Success Criteria",
+            "type": "array"
+          },
+          "target_cohort": {
+            "title": "Target Cohort",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plan_id",
+          "title",
+          "hypothesis",
+          "target_cohort"
+        ],
+        "title": "CampaignExperimentPlan",
+        "type": "object"
+      },
+      "CampaignExperimentPlanAgentLaunchRequest": {
+        "properties": {
+          "notes": {
+            "default": "",
+            "title": "Notes",
+            "type": "string"
+          },
+          "objective": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Objective"
+          }
+        },
+        "title": "CampaignExperimentPlanAgentLaunchRequest",
+        "type": "object"
+      },
+      "CampaignExperimentPlanLaunchRequest": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "notes": {
+            "default": "",
+            "title": "Notes",
+            "type": "string"
+          }
+        },
+        "title": "CampaignExperimentPlanLaunchRequest",
+        "type": "object"
+      },
+      "CampaignExperimentPlanReport": {
+        "properties": {
+          "acceptance_criteria": {
+            "items": {
+              "$ref": "#/components/schemas/ExperimentSuccessCriterion"
+            },
+            "title": "Acceptance Criteria",
+            "type": "array"
+          },
+          "acceptance_notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Acceptance Notes",
+            "type": "array"
+          },
+          "acceptance_status": {
+            "title": "Acceptance Status",
+            "type": "string"
+          },
+          "baseline_control": {
+            "default": "",
+            "title": "Baseline Control",
+            "type": "string"
+          },
+          "current_best_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Best Run Id"
+          },
+          "current_leading_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Leading Model"
+          },
+          "launch_ready": {
+            "default": false,
+            "title": "Launch Ready",
+            "type": "boolean"
+          },
+          "plan_id": {
+            "title": "Plan Id",
+            "type": "string"
+          },
+          "target_cohort": {
+            "title": "Target Cohort",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plan_id",
+          "title",
+          "acceptance_status",
+          "target_cohort"
+        ],
+        "title": "CampaignExperimentPlanReport",
+        "type": "object"
+      },
+      "CampaignFollowUpLaunchRequest": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "notes": {
+            "default": "",
+            "title": "Notes",
+            "type": "string"
+          },
+          "proposal_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Proposal Id"
+          }
+        },
+        "title": "CampaignFollowUpLaunchRequest",
+        "type": "object"
+      },
+      "CampaignFollowUpProposal": {
+        "properties": {
+          "benchmark_specs": {
+            "items": {
+              "$ref": "#/components/schemas/CampaignBenchmarkSpec"
+            },
+            "title": "Benchmark Specs",
+            "type": "array"
+          },
+          "proposal_id": {
+            "title": "Proposal Id",
+            "type": "string"
+          },
+          "rationale": {
+            "title": "Rationale",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "proposal_id",
+          "title",
+          "rationale",
+          "benchmark_specs"
+        ],
+        "title": "CampaignFollowUpProposal",
+        "type": "object"
+      },
+      "CampaignKind": {
+        "enum": [
+          "benchmark"
+        ],
+        "title": "CampaignKind",
+        "type": "string"
+      },
+      "CampaignRecord": {
+        "properties": {
+          "benchmark_specs": {
+            "items": {
+              "$ref": "#/components/schemas/CampaignEntry"
+            },
+            "title": "Benchmark Specs",
+            "type": "array"
+          },
+          "campaign_id": {
+            "title": "Campaign Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/CampaignKind",
+            "default": "benchmark"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "title": "Notes",
+            "type": "string"
+          },
+          "objective": {
+            "default": "",
+            "title": "Objective",
+            "type": "string"
+          },
+          "program_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Program Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CampaignStatus",
+            "default": "created"
+          },
+          "summary": {
+            "additionalProperties": true,
+            "title": "Summary",
+            "type": "object"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "campaign_id",
+          "name"
+        ],
+        "title": "CampaignRecord",
+        "type": "object"
+      },
+      "CampaignRequest": {
+        "properties": {
+          "benchmark_specs": {
+            "items": {
+              "$ref": "#/components/schemas/CampaignBenchmarkSpec"
+            },
+            "title": "Benchmark Specs",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "title": "Notes",
+            "type": "string"
+          },
+          "objective": {
+            "default": "",
+            "title": "Objective",
+            "type": "string"
+          },
+          "program_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Program Id"
+          }
+        },
+        "required": [
+          "name",
+          "benchmark_specs"
+        ],
+        "title": "CampaignRequest",
+        "type": "object"
+      },
+      "CampaignStatus": {
+        "enum": [
+          "created",
+          "running",
+          "completed",
+          "failed",
+          "cancelled"
+        ],
+        "title": "CampaignStatus",
+        "type": "string"
+      },
+      "ComparativeMetric": {
+        "properties": {
+          "delta": {
+            "title": "Delta",
+            "type": "number"
+          },
+          "interpretation": {
+            "default": "",
+            "title": "Interpretation",
+            "type": "string"
+          },
+          "lower_ci": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lower Ci"
+          },
+          "p_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P Value"
+          },
+          "upper_ci": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Upper Ci"
+          }
+        },
+        "required": [
+          "delta"
+        ],
+        "title": "ComparativeMetric",
+        "type": "object"
+      },
+      "ExperimentSuccessCriterion": {
+        "properties": {
+          "comparator": {
+            "title": "Comparator",
+            "type": "string"
+          },
+          "metric": {
+            "title": "Metric",
+            "type": "string"
+          },
+          "rationale": {
+            "default": "",
+            "title": "Rationale",
+            "type": "string"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Target"
+          }
+        },
+        "required": [
+          "metric",
+          "comparator",
+          "target"
+        ],
+        "title": "ExperimentSuccessCriterion",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "InputMode": {
+        "enum": [
+          "dicom",
+          "demo",
+          "research"
+        ],
+        "title": "InputMode",
+        "type": "string"
+      },
+      "JobKind": {
+        "enum": [
+          "benchmark",
+          "agent_run",
+          "study_analysis"
+        ],
+        "title": "JobKind",
+        "type": "string"
+      },
+      "JobRecord": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "default": "",
+            "title": "Error",
+            "type": "string"
+          },
+          "executor": {
+            "default": "in-process",
+            "title": "Executor",
+            "type": "string"
+          },
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/JobKind"
+          },
+          "owner_id": {
+            "title": "Owner Id",
+            "type": "string"
+          },
+          "owner_type": {
+            "$ref": "#/components/schemas/RecordOwnerType"
+          },
+          "queue_name": {
+            "default": "local-inline",
+            "title": "Queue Name",
+            "type": "string"
+          },
+          "request_payload": {
+            "additionalProperties": true,
+            "title": "Request Payload",
+            "type": "object"
+          },
+          "result_payload": {
+            "additionalProperties": true,
+            "title": "Result Payload",
+            "type": "object"
+          },
+          "status": {
+            "$ref": "#/components/schemas/JobStatus"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "owner_type",
+          "owner_id",
+          "kind",
+          "status"
+        ],
+        "title": "JobRecord",
+        "type": "object"
+      },
+      "JobStatus": {
+        "enum": [
+          "queued",
+          "running",
+          "completed",
+          "failed",
+          "cancelled"
+        ],
+        "title": "JobStatus",
+        "type": "string"
+      },
+      "LanguageStack": {
+        "enum": [
+          "sounio",
+          "python",
+          "julia",
+          "cpp",
+          "multi"
+        ],
+        "title": "LanguageStack",
+        "type": "string"
+      },
+      "MCPServerDescriptor": {
+        "properties": {
+          "allowed_tools": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Allowed Tools",
+            "type": "array"
+          },
+          "command": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Command",
+            "type": "array"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "health_status": {
+            "$ref": "#/components/schemas/MCPServerHealthStatus",
+            "default": "healthy"
+          },
+          "last_seen": {
+            "format": "date-time",
+            "title": "Last Seen",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "transport": {
+            "$ref": "#/components/schemas/MCPTransport"
+          },
+          "trust_level": {
+            "$ref": "#/components/schemas/ToolTrustLevel"
+          }
+        },
+        "required": [
+          "name",
+          "transport",
+          "trust_level",
+          "description"
+        ],
+        "title": "MCPServerDescriptor",
+        "type": "object"
+      },
+      "MCPServerHealth": {
+        "properties": {
+          "available_tools": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Available Tools",
+            "type": "array"
+          },
+          "checked_at": {
+            "format": "date-time",
+            "title": "Checked At",
+            "type": "string"
+          },
+          "health_status": {
+            "$ref": "#/components/schemas/MCPServerHealthStatus"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "health_status"
+        ],
+        "title": "MCPServerHealth",
+        "type": "object"
+      },
+      "MCPServerHealthStatus": {
+        "enum": [
+          "healthy",
+          "degraded",
+          "unavailable"
+        ],
+        "title": "MCPServerHealthStatus",
+        "type": "string"
+      },
+      "MCPTransport": {
+        "enum": [
+          "stdio",
+          "streamable_http"
+        ],
+        "title": "MCPTransport",
+        "type": "string"
+      },
+      "ModelFamily": {
+        "enum": [
+          "sounio_hypercomplex",
+          "python_3d_conventional",
+          "julia_equivalent",
+          "cpp_equivalent",
+          "benchmark_suite"
+        ],
+        "title": "ModelFamily",
+        "type": "string"
+      },
+      "PortfolioCampaignSummary": {
+        "properties": {
+          "best_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Run Id"
+          },
+          "blocked_plan_count": {
+            "default": 0,
+            "title": "Blocked Plan Count",
+            "type": "integer"
+          },
+          "campaign_id": {
+            "title": "Campaign Id",
+            "type": "string"
+          },
+          "completed_runs": {
+            "default": 0,
+            "title": "Completed Runs",
+            "type": "integer"
+          },
+          "failed_runs": {
+            "default": 0,
+            "title": "Failed Runs",
+            "type": "integer"
+          },
+          "leading_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leading Model"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ready_plan_count": {
+            "default": 0,
+            "title": "Ready Plan Count",
+            "type": "integer"
+          },
+          "sounio_aspects_mae": {
+            "default": 999.0,
+            "title": "Sounio Aspects Mae",
+            "type": "number"
+          },
+          "sounio_auc": {
+            "default": 0.0,
+            "title": "Sounio Auc",
+            "type": "number"
+          },
+          "sounio_isles_dice": {
+            "default": 0.0,
+            "title": "Sounio Isles Dice",
+            "type": "number"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CampaignStatus"
+          },
+          "top_plan_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top Plan Id"
+          },
+          "total_runs": {
+            "default": 0,
+            "title": "Total Runs",
+            "type": "integer"
+          },
+          "watch_plan_count": {
+            "default": 0,
+            "title": "Watch Plan Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "campaign_id",
+          "name",
+          "status"
+        ],
+        "title": "PortfolioCampaignSummary",
+        "type": "object"
+      },
+      "PortfolioProgramSummary": {
+        "properties": {
+          "blocked_plan_count": {
+            "default": 0,
+            "title": "Blocked Plan Count",
+            "type": "integer"
+          },
+          "completed_campaigns": {
+            "default": 0,
+            "title": "Completed Campaigns",
+            "type": "integer"
+          },
+          "failed_campaigns": {
+            "default": 0,
+            "title": "Failed Campaigns",
+            "type": "integer"
+          },
+          "leading_campaign_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leading Campaign Id"
+          },
+          "leading_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leading Model"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "program_id": {
+            "title": "Program Id",
+            "type": "string"
+          },
+          "ready_plan_count": {
+            "default": 0,
+            "title": "Ready Plan Count",
+            "type": "integer"
+          },
+          "running_campaigns": {
+            "default": 0,
+            "title": "Running Campaigns",
+            "type": "integer"
+          },
+          "sounio_aspects_mae": {
+            "default": 999.0,
+            "title": "Sounio Aspects Mae",
+            "type": "number"
+          },
+          "sounio_auc": {
+            "default": 0.0,
+            "title": "Sounio Auc",
+            "type": "number"
+          },
+          "sounio_isles_dice": {
+            "default": 0.0,
+            "title": "Sounio Isles Dice",
+            "type": "number"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ProgramStatus"
+          },
+          "total_campaigns": {
+            "default": 0,
+            "title": "Total Campaigns",
+            "type": "integer"
+          },
+          "watch_plan_count": {
+            "default": 0,
+            "title": "Watch Plan Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "program_id",
+          "name",
+          "status"
+        ],
+        "title": "PortfolioProgramSummary",
+        "type": "object"
+      },
+      "PortfolioReport": {
+        "properties": {
+          "campaigns": {
+            "items": {
+              "$ref": "#/components/schemas/PortfolioCampaignSummary"
+            },
+            "title": "Campaigns",
+            "type": "array"
+          },
+          "completed_campaigns": {
+            "default": 0,
+            "title": "Completed Campaigns",
+            "type": "integer"
+          },
+          "failed_campaigns": {
+            "default": 0,
+            "title": "Failed Campaigns",
+            "type": "integer"
+          },
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "leading_campaign_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leading Campaign Id"
+          },
+          "next_actions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Next Actions",
+            "type": "array"
+          },
+          "portfolio_id": {
+            "title": "Portfolio Id",
+            "type": "string"
+          },
+          "running_campaigns": {
+            "default": 0,
+            "title": "Running Campaigns",
+            "type": "integer"
+          },
+          "total_campaigns": {
+            "default": 0,
+            "title": "Total Campaigns",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "portfolio_id"
+        ],
+        "title": "PortfolioReport",
+        "type": "object"
+      },
+      "PrivacyMode": {
+        "enum": [
+          "local_deidentified"
+        ],
+        "title": "PrivacyMode",
+        "type": "string"
+      },
+      "ProgramCampaignAttachRequest": {
+        "properties": {
+          "campaign_id": {
+            "title": "Campaign Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "campaign_id"
+        ],
+        "title": "ProgramCampaignAttachRequest",
+        "type": "object"
+      },
+      "ProgramPortfolioReport": {
+        "properties": {
+          "active_programs": {
+            "default": 0,
+            "title": "Active Programs",
+            "type": "integer"
+          },
+          "blocked_programs": {
+            "default": 0,
+            "title": "Blocked Programs",
+            "type": "integer"
+          },
+          "completed_programs": {
+            "default": 0,
+            "title": "Completed Programs",
+            "type": "integer"
+          },
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "leading_program_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leading Program Id"
+          },
+          "next_actions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Next Actions",
+            "type": "array"
+          },
+          "portfolio_id": {
+            "title": "Portfolio Id",
+            "type": "string"
+          },
+          "programs": {
+            "items": {
+              "$ref": "#/components/schemas/PortfolioProgramSummary"
+            },
+            "title": "Programs",
+            "type": "array"
+          },
+          "total_programs": {
+            "default": 0,
+            "title": "Total Programs",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "portfolio_id"
+        ],
+        "title": "ProgramPortfolioReport",
+        "type": "object"
+      },
+      "ProgramRecord": {
+        "properties": {
+          "campaign_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Campaign Ids",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "hypothesis": {
+            "default": "",
+            "title": "Hypothesis",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "title": "Notes",
+            "type": "string"
+          },
+          "objective": {
+            "default": "",
+            "title": "Objective",
+            "type": "string"
+          },
+          "program_id": {
+            "title": "Program Id",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ProgramStatus",
+            "default": "created"
+          },
+          "summary": {
+            "additionalProperties": true,
+            "title": "Summary",
+            "type": "object"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "program_id",
+          "name"
+        ],
+        "title": "ProgramRecord",
+        "type": "object"
+      },
+      "ProgramRequest": {
+        "properties": {
+          "campaign_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Campaign Ids",
+            "type": "array"
+          },
+          "hypothesis": {
+            "default": "",
+            "title": "Hypothesis",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "title": "Notes",
+            "type": "string"
+          },
+          "objective": {
+            "default": "",
+            "title": "Objective",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "ProgramRequest",
+        "type": "object"
+      },
+      "ProgramStatus": {
+        "enum": [
+          "created",
+          "active",
+          "completed",
+          "blocked",
+          "archived"
+        ],
+        "title": "ProgramStatus",
+        "type": "string"
+      },
+      "RecordOwnerType": {
+        "enum": [
+          "study",
+          "benchmark_run",
+          "agent_run",
+          "research_brief",
+          "campaign",
+          "portfolio",
+          "program"
+        ],
+        "title": "RecordOwnerType",
+        "type": "string"
+      },
+      "RegionScore": {
+        "properties": {
+          "affected": {
+            "title": "Affected",
+            "type": "boolean"
+          },
+          "atlas_overlap": {
+            "title": "Atlas Overlap",
+            "type": "number"
+          },
+          "probability": {
+            "title": "Probability",
+            "type": "number"
+          },
+          "region": {
+            "title": "Region",
+            "type": "string"
+          },
+          "score_delta": {
+            "title": "Score Delta",
+            "type": "integer"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "region",
+          "probability",
+          "affected",
+          "score_delta",
+          "atlas_overlap",
+          "summary"
+        ],
+        "title": "RegionScore",
+        "type": "object"
+      },
+      "ResearchBrief": {
+        "properties": {
+          "brief_id": {
+            "title": "Brief Id",
+            "type": "string"
+          },
+          "claim_summary": {
+            "title": "Claim Summary",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "dataset_manifest_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Manifest Path"
+          },
+          "evidence_table_path": {
+            "title": "Evidence Table Path",
+            "type": "string"
+          },
+          "exclusion_criteria": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Exclusion Criteria",
+            "type": "array"
+          },
+          "inclusion_criteria": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Inclusion Criteria",
+            "type": "array"
+          },
+          "protocol_recommendations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Protocol Recommendations",
+            "type": "array"
+          },
+          "question": {
+            "title": "Question",
+            "type": "string"
+          },
+          "source_links": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Source Links",
+            "type": "array"
+          },
+          "supporting_campaign_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supporting Campaign Id"
+          },
+          "supporting_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supporting Run Id"
+          }
+        },
+        "required": [
+          "brief_id",
+          "question",
+          "evidence_table_path",
+          "claim_summary"
+        ],
+        "title": "ResearchBrief",
+        "type": "object"
+      },
+      "ResearchBriefRequest": {
+        "properties": {
+          "benchmark_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Benchmark Run Id"
+          },
+          "campaign_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Campaign Id"
+          },
+          "dataset_manifest_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Manifest Path"
+          },
+          "external_test_manifest_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Test Manifest Path"
+          },
+          "question": {
+            "title": "Question",
+            "type": "string"
+          },
+          "study_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Id"
+          }
+        },
+        "required": [
+          "question"
+        ],
+        "title": "ResearchBriefRequest",
+        "type": "object"
+      },
+      "SafetyPolicy": {
+        "properties": {
+          "autonomy_mode": {
+            "$ref": "#/components/schemas/AutonomyMode",
+            "default": "autonomous_lab"
+          },
+          "local_tool_allowlist": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Local Tool Allowlist",
+            "type": "array"
+          },
+          "privacy_mode": {
+            "$ref": "#/components/schemas/PrivacyMode",
+            "default": "local_deidentified"
+          },
+          "public_tool_allowlist": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Public Tool Allowlist",
+            "type": "array"
+          },
+          "remote_tool_policy": {
+            "default": "public_only_deidentified",
+            "title": "Remote Tool Policy",
+            "type": "string"
+          },
+          "write_scope": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Write Scope",
+            "type": "array"
+          }
+        },
+        "title": "SafetyPolicy",
+        "type": "object"
+      },
+      "StudyRecord": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "files": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "input_mode": {
+            "$ref": "#/components/schemas/InputMode"
+          },
+          "status": {
+            "$ref": "#/components/schemas/StudyStatus"
+          },
+          "study_id": {
+            "title": "Study Id",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "study_id",
+          "input_mode",
+          "status",
+          "files"
+        ],
+        "title": "StudyRecord",
+        "type": "object"
+      },
+      "StudyStatus": {
+        "enum": [
+          "created",
+          "analyzed",
+          "failed"
+        ],
+        "title": "StudyStatus",
+        "type": "string"
+      },
+      "ToolTrustLevel": {
+        "enum": [
+          "local",
+          "public"
+        ],
+        "title": "ToolTrustLevel",
+        "type": "string"
+      },
+      "TraceEvent": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "event_id": {
+            "title": "Event Id",
+            "type": "string"
+          },
+          "event_type": {
+            "title": "Event Type",
+            "type": "string"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "title": "Payload",
+            "type": "object"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "trace_id": {
+            "title": "Trace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "event_id",
+          "run_id",
+          "trace_id",
+          "event_type"
+        ],
+        "title": "TraceEvent",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Sounio Stroke Lab",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/agent/runs": {
+      "post": {
+        "operationId": "create_agent_run_agent_runs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentRunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRun"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Agent Run"
+      }
+    },
+    "/agent/runs/{run_id}": {
+      "get": {
+        "operationId": "get_agent_run_agent_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRun"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Agent Run"
+      }
+    },
+    "/agent/runs/{run_id}/cancel": {
+      "post": {
+        "operationId": "cancel_agent_run_agent_runs__run_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRun"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Agent Run"
+      }
+    },
+    "/agent/runs/{run_id}/events": {
+      "get": {
+        "operationId": "get_agent_run_events_agent_runs__run_id__events_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Agent Run Events"
+      }
+    },
+    "/agent/runs/{run_id}/trace": {
+      "get": {
+        "operationId": "get_agent_run_trace_agent_runs__run_id__trace_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TraceEvent"
+                  },
+                  "title": "Response Get Agent Run Trace Agent Runs  Run Id  Trace Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Agent Run Trace"
+      }
+    },
+    "/artifacts/{owner_type}/{owner_id}": {
+      "get": {
+        "operationId": "list_artifacts_artifacts__owner_type___owner_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "owner_type",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/RecordOwnerType"
+            }
+          },
+          {
+            "in": "path",
+            "name": "owner_id",
+            "required": true,
+            "schema": {
+              "title": "Owner Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ArtifactRef"
+                  },
+                  "title": "Response List Artifacts Artifacts  Owner Type   Owner Id  Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Artifacts"
+      }
+    },
+    "/benchmark/jobs": {
+      "post": {
+        "operationId": "submit_benchmark_job_benchmark_jobs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BenchmarkRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Benchmark Job"
+      }
+    },
+    "/benchmark/runs": {
+      "post": {
+        "operationId": "create_benchmark_run_benchmark_runs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BenchmarkRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BenchmarkRun"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Benchmark Run"
+      }
+    },
+    "/benchmark/runs/{run_id}": {
+      "get": {
+        "operationId": "get_benchmark_run_benchmark_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BenchmarkRun"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Benchmark Run"
+      }
+    },
+    "/campaigns": {
+      "get": {
+        "operationId": "list_campaigns_campaigns_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CampaignRecord"
+                  },
+                  "title": "Response List Campaigns Campaigns Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Campaigns"
+      },
+      "post": {
+        "operationId": "create_campaign_campaigns_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampaignRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Campaign"
+      }
+    },
+    "/campaigns/{campaign_id}": {
+      "get": {
+        "operationId": "get_campaign_campaigns__campaign_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Campaign"
+      }
+    },
+    "/campaigns/{campaign_id}/brief": {
+      "post": {
+        "operationId": "create_campaign_brief_campaigns__campaign_id__brief_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ResearchBriefRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResearchBrief"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Campaign Brief"
+      }
+    },
+    "/campaigns/{campaign_id}/followup": {
+      "get": {
+        "operationId": "get_campaign_follow_up_proposals_campaigns__campaign_id__followup_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CampaignFollowUpProposal"
+                  },
+                  "title": "Response Get Campaign Follow Up Proposals Campaigns  Campaign Id  Followup Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Campaign Follow Up Proposals"
+      },
+      "post": {
+        "operationId": "launch_campaign_follow_up_campaigns__campaign_id__followup_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/CampaignFollowUpLaunchRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Launch Campaign Follow Up"
+      }
+    },
+    "/campaigns/{campaign_id}/plan-reports": {
+      "get": {
+        "operationId": "get_campaign_experiment_plan_reports_campaigns__campaign_id__plan_reports_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CampaignExperimentPlanReport"
+                  },
+                  "title": "Response Get Campaign Experiment Plan Reports Campaigns  Campaign Id  Plan Reports Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Campaign Experiment Plan Reports"
+      }
+    },
+    "/campaigns/{campaign_id}/plans": {
+      "get": {
+        "operationId": "get_campaign_experiment_plans_campaigns__campaign_id__plans_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CampaignExperimentPlan"
+                  },
+                  "title": "Response Get Campaign Experiment Plans Campaigns  Campaign Id  Plans Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Campaign Experiment Plans"
+      }
+    },
+    "/campaigns/{campaign_id}/plans/{plan_id}/agent-run": {
+      "post": {
+        "operationId": "launch_campaign_experiment_plan_agent_run_campaigns__campaign_id__plans__plan_id__agent_run_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "title": "Plan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/CampaignExperimentPlanAgentLaunchRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRun"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Launch Campaign Experiment Plan Agent Run"
+      }
+    },
+    "/campaigns/{campaign_id}/plans/{plan_id}/campaign": {
+      "post": {
+        "operationId": "launch_campaign_experiment_plan_campaigns__campaign_id__plans__plan_id__campaign_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "title": "Plan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/CampaignExperimentPlanLaunchRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Launch Campaign Experiment Plan"
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Health Health Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/jobs/{job_id}": {
+      "get": {
+        "operationId": "get_job_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Job"
+      }
+    },
+    "/jobs/{job_id}/cancel": {
+      "post": {
+        "operationId": "cancel_job_jobs__job_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Job"
+      }
+    },
+    "/jobs/{job_id}/manifest": {
+      "get": {
+        "operationId": "get_job_manifest_jobs__job_id__manifest_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Get Job Manifest Jobs  Job Id  Manifest Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Job Manifest"
+      }
+    },
+    "/mcp/servers": {
+      "get": {
+        "operationId": "list_mcp_servers_mcp_servers_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MCPServerDescriptor"
+                  },
+                  "title": "Response List Mcp Servers Mcp Servers Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Mcp Servers"
+      }
+    },
+    "/mcp/servers/{name}/health": {
+      "get": {
+        "operationId": "get_mcp_server_health_mcp_servers__name__health_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MCPServerHealth"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Mcp Server Health"
+      }
+    },
+    "/portfolio/campaigns": {
+      "get": {
+        "operationId": "get_campaign_portfolio_portfolio_campaigns_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Campaign Portfolio"
+      }
+    },
+    "/portfolio/programs": {
+      "get": {
+        "operationId": "get_program_portfolio_portfolio_programs_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramPortfolioReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Program Portfolio"
+      }
+    },
+    "/programs": {
+      "get": {
+        "operationId": "list_programs_programs_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramRecord"
+                  },
+                  "title": "Response List Programs Programs Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Programs"
+      },
+      "post": {
+        "operationId": "create_program_programs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Program"
+      }
+    },
+    "/programs/{program_id}": {
+      "get": {
+        "operationId": "get_program_programs__program_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "program_id",
+            "required": true,
+            "schema": {
+              "title": "Program Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Program"
+      }
+    },
+    "/programs/{program_id}/campaigns": {
+      "post": {
+        "operationId": "create_program_campaign_programs__program_id__campaigns_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "program_id",
+            "required": true,
+            "schema": {
+              "title": "Program Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampaignRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Program Campaign"
+      }
+    },
+    "/programs/{program_id}/campaigns/attach": {
+      "post": {
+        "operationId": "attach_program_campaign_programs__program_id__campaigns_attach_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "program_id",
+            "required": true,
+            "schema": {
+              "title": "Program Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramCampaignAttachRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Attach Program Campaign"
+      }
+    },
+    "/readyz": {
+      "get": {
+        "operationId": "readyz_readyz_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Readyz Readyz Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Readyz"
+      }
+    },
+    "/research/briefs": {
+      "post": {
+        "operationId": "create_research_brief_research_briefs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResearchBriefRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResearchBrief"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Research Brief"
+      }
+    },
+    "/studies": {
+      "post": {
+        "operationId": "create_study_studies_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_study_studies_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudyRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Study"
+      }
+    },
+    "/studies/{study_id}/analyze": {
+      "post": {
+        "operationId": "analyze_study_studies__study_id__analyze_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "study_id",
+            "required": true,
+            "schema": {
+              "title": "Study Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeStudyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Analyze Study"
+      }
+    },
+    "/studies/{study_id}/result": {
+      "get": {
+        "operationId": "get_study_result_studies__study_id__result_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "study_id",
+            "required": true,
+            "schema": {
+              "title": "Study Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Study Result"
+      }
+    }
+  }
+}

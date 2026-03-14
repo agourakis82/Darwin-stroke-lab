@@ -1,0 +1,196 @@
+{
+  "$defs": {
+    "BenchmarkRequest": {
+      "properties": {
+        "dataset_manifest_path": {
+          "title": "Dataset Manifest Path",
+          "type": "string"
+        },
+        "external_test_manifest_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Test Manifest Path"
+        },
+        "seed": {
+          "default": 13,
+          "title": "Seed",
+          "type": "integer"
+        },
+        "test_split": {
+          "default": "test",
+          "title": "Test Split",
+          "type": "string"
+        },
+        "train_split": {
+          "default": "train",
+          "title": "Train Split",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_manifest_path"
+      ],
+      "title": "BenchmarkRequest",
+      "type": "object"
+    },
+    "CampaignEntry": {
+      "properties": {
+        "benchmark_run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Benchmark Run Id"
+        },
+        "entry_id": {
+          "title": "Entry Id",
+          "type": "string"
+        },
+        "error": {
+          "default": "",
+          "title": "Error",
+          "type": "string"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Id"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "request": {
+          "$ref": "#/$defs/BenchmarkRequest"
+        },
+        "status": {
+          "$ref": "#/$defs/JobStatus",
+          "default": "queued"
+        }
+      },
+      "required": [
+        "entry_id",
+        "label",
+        "request"
+      ],
+      "title": "CampaignEntry",
+      "type": "object"
+    },
+    "CampaignKind": {
+      "enum": [
+        "benchmark"
+      ],
+      "title": "CampaignKind",
+      "type": "string"
+    },
+    "CampaignStatus": {
+      "enum": [
+        "created",
+        "running",
+        "completed",
+        "failed",
+        "cancelled"
+      ],
+      "title": "CampaignStatus",
+      "type": "string"
+    },
+    "JobStatus": {
+      "enum": [
+        "queued",
+        "running",
+        "completed",
+        "failed",
+        "cancelled"
+      ],
+      "title": "JobStatus",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "benchmark_specs": {
+      "items": {
+        "$ref": "#/$defs/CampaignEntry"
+      },
+      "title": "Benchmark Specs",
+      "type": "array"
+    },
+    "campaign_id": {
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/CampaignKind",
+      "default": "benchmark"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "notes": {
+      "default": "",
+      "title": "Notes",
+      "type": "string"
+    },
+    "objective": {
+      "default": "",
+      "title": "Objective",
+      "type": "string"
+    },
+    "program_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Program Id"
+    },
+    "status": {
+      "$ref": "#/$defs/CampaignStatus",
+      "default": "created"
+    },
+    "summary": {
+      "additionalProperties": true,
+      "title": "Summary",
+      "type": "object"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "name"
+  ],
+  "title": "CampaignRecord",
+  "type": "object"
+}

@@ -1,0 +1,69 @@
+{
+  "language_roles": {
+    "fsharp": {
+      "adoption_scope": "api, workers, orchestration, jobs, campaigns, programs, portfolio, and storage adapters",
+      "selection_status": "primary_control_plane"
+    },
+    "julia": {
+      "adoption_scope": "future scientific cross-checks and probabilistic alternatives, not the primary rewrite shell",
+      "selection_status": "scientific_reference_lane"
+    },
+    "python": {
+      "adoption_scope": "frozen contract source of truth until F# reaches parity",
+      "selection_status": "legacy_compatibility_lane"
+    },
+    "rust": {
+      "adoption_scope": "systems burden and K8s/HPC edge comparison, not the chosen primary rewrite",
+      "selection_status": "comparison_lane"
+    },
+    "sounio": {
+      "adoption_scope": "scientific semantics, kernels, manifests, and runtime contracts",
+      "selection_status": "primary_scientific_kernel"
+    },
+    "stan": {
+      "adoption_scope": "calibration, uncertainty estimation, posterior checks, and comparative evidence",
+      "selection_status": "baseline_probabilistic_lane"
+    }
+  },
+  "registry_version": "v1",
+  "selection_policy": "role_based",
+  "subsystems": [
+    {
+      "comparison_against": [
+        "python",
+        "julia",
+        "rust"
+      ],
+      "name": "scientific_kernel",
+      "primary_language": "sounio",
+      "why": "Kernel semantics, manifest execution, provenance, and benchmark-backed scientific claims belong to Sounio."
+    },
+    {
+      "comparison_against": [
+        "python",
+        "rust"
+      ],
+      "name": "control_plane",
+      "primary_language": "fsharp",
+      "why": "Typed orchestration, units-of-measure, ASP.NET Core integration, and lower glue burden than Python."
+    },
+    {
+      "comparison_against": [
+        "python",
+        "julia"
+      ],
+      "name": "probabilistic_baseline",
+      "primary_language": "stan",
+      "why": "Calibration and uncertainty should be benchmarked against a mature probabilistic baseline, not embedded in the workflow shell."
+    },
+    {
+      "comparison_against": [
+        "rust"
+      ],
+      "name": "k8s_hpc_edge",
+      "primary_language": "fsharp",
+      "why": "The primary rewrite stays F#-first, but K8s and systems burden stay explicitly comparable against Rust."
+    }
+  ],
+  "thesis": "Sounio plus F# is the target rewrite stack; Stan is the probabilistic baseline lane."
+}

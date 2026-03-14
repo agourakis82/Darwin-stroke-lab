@@ -1,0 +1,98 @@
+/// Test Runner for Darwin Atlas Kernels
+///
+/// Runs all module tests and reports results.
+/// Note: Until sibling module imports are supported, this runs inline tests.
+
+module test_runner
+
+// =============================================================================
+// Inline Test Functions
+// =============================================================================
+
+/// Basic operator test - shift identity
+fn test_shift_identity() -> bool {
+    // shift(seq, 0) == seq
+    // shift(seq, len) == seq
+    true  // Placeholder - actual test in operators.sio
+}
+
+/// Basic operator test - reverse is involution
+fn test_reverse_involution() -> bool {
+    // reverse(reverse(seq)) == seq
+    true  // Placeholder
+}
+
+/// Quaternion double cover test
+fn test_quaternion_double_cover() -> bool {
+    // |Q8| = 2 * |D4|
+    true  // Placeholder
+}
+
+/// Symmetry orbit test
+fn test_orbit_properties() -> bool {
+    // orbit_size divides group_order
+    true  // Placeholder
+}
+
+/// Metric triangle inequality
+fn test_metric_triangle() -> bool {
+    // d(a,c) <= d(a,b) + d(b,c)
+    true  // Placeholder
+}
+
+// =============================================================================
+// Test Runner
+// =============================================================================
+
+pub fn run_all_tests() -> (usize, usize) {
+    var passed: usize = 0
+    var failed: usize = 0
+
+    // Test operators
+    if test_shift_identity() {
+        passed = passed + 1
+    } else {
+        failed = failed + 1
+    }
+
+    if test_reverse_involution() {
+        passed = passed + 1
+    } else {
+        failed = failed + 1
+    }
+
+    // Test quaternion
+    if test_quaternion_double_cover() {
+        passed = passed + 1
+    } else {
+        failed = failed + 1
+    }
+
+    // Test symmetry
+    if test_orbit_properties() {
+        passed = passed + 1
+    } else {
+        failed = failed + 1
+    }
+
+    // Test metric
+    if test_metric_triangle() {
+        passed = passed + 1
+    } else {
+        failed = failed + 1
+    }
+
+    (passed, failed)
+}
+
+fn main() {
+    let results = run_all_tests()
+    let passed = results.0
+    let failed = results.1
+
+    // Results would be printed via IO effect when available
+    // For now, return success if all tests pass
+    if failed == 0 {
+        // All tests passed
+    }
+}

@@ -1,0 +1,187 @@
+/// Atlas Epistemic Knowledge Verifier
+///
+/// Validates atlas_knowledge.jsonl against Sounio Knowledge[T] schema.
+///
+/// Invariants checked:
+/// 1. Provenance fields present and non-empty
+/// 2. Epsilon >= 0
+/// 3. Confidence in [0,1]
+/// 4. Validity predicate holds
+/// 5. No-miracles: epsilon cannot decrease without explicit rule
+///
+/// NOTE: This module requires IO and JSON support (stdlib/io, stdlib/json)
+/// which are pending implementation.
+
+module atlas::verify_knowledge
+
+// =============================================================================
+// Placeholder Types (until stdlib provides these)
+// =============================================================================
+
+/// Placeholder for JSON value type
+pub enum JsonValue {
+    Null,
+    Bool(bool),
+    Number(f64),
+    Text(str),
+}
+
+/// Placeholder for IO errors
+pub struct IoError {
+    code: i32,
+}
+
+// =============================================================================
+// Knowledge Record Schema (matches Julia exporter)
+// =============================================================================
+
+pub struct ValidityInfo {
+    holds: bool,
+}
+
+pub struct ProvenanceInfo {
+    atlas_git_sha: str,
+    atlas_version: str,
+    timestamp_utc: str,
+    pipeline_max: i64,
+    pipeline_seed: i64,
+}
+
+// =============================================================================
+// Validation Rules
+// =============================================================================
+
+pub enum ValidationRule {
+    ProvenancePresent,
+    ProvenanceGitSha,
+    ProvenanceTimestamp,
+    EpsilonNonNegative,
+    ConfidenceRange,
+    ValidityHolds,
+}
+
+pub struct ValidationFailure {
+    rule: ValidationRule,
+    record_idx: usize,
+}
+
+pub struct ValidationReport {
+    total_records: usize,
+    total_checks: usize,
+    passed: usize,
+    failed: usize,
+}
+
+// =============================================================================
+// Validator Implementation
+// =============================================================================
+
+/// Validate epsilon is non-negative
+pub fn check_epsilon(eps: f64) -> bool {
+    eps >= 0.0
+}
+
+/// Validate confidence is in [0, 1]
+pub fn check_confidence(conf: f64) -> bool {
+    conf >= 0.0 && conf <= 1.0
+}
+
+/// Validate GC fraction is in [0, 1]
+pub fn check_gc_fraction(value: f64) -> bool {
+    value >= 0.0 && value <= 1.0
+}
+
+/// Validate orbit ratio is in [0.25, 1]
+pub fn check_orbit_ratio(value: f64) -> bool {
+    value >= 0.25 && value <= 1.0
+}
+
+/// Validate normalized metric is in [0, 1]
+pub fn check_normalized_metric(value: f64) -> bool {
+    value >= 0.0 && value <= 1.0
+}
+
+/// Validate length is positive
+pub fn check_length_positive(value: f64) -> bool {
+    value > 0.0
+}
+
+/// Helper: minimum of two values
+fn min_usize(a: usize, b: usize) -> usize {
+    if a < b { a } else { b }
+}
+
+// =============================================================================
+// Main Entry Point (Stub)
+// =============================================================================
+
+/// Main validation entry point
+/// Requires: IO effect for file operations
+/// Requires: JSON parsing support
+pub fn validate_atlas_knowledge() -> ValidationReport {
+    // Placeholder - actual implementation requires:
+    // 1. read_file() from stdlib/io
+    // 2. parse_json() from stdlib/json
+    // 3. Command-line argument parsing
+
+    ValidationReport {
+        total_records: 0,
+        total_checks: 0,
+        passed: 0,
+        failed: 0,
+    }
+}
+
+/// Run validation checks on metric values
+pub fn validate_metric(metric_name: str, value: f64) -> bool {
+    // Check metric-specific constraints
+    if metric_name == "gc_fraction" {
+        return check_gc_fraction(value)
+    }
+
+    if metric_name == "orbit_ratio" {
+        return check_orbit_ratio(value)
+    }
+
+    if metric_name == "dmin_over_L" {
+        return check_normalized_metric(value)
+    }
+
+    if metric_name == "dmin_normalized" {
+        return check_normalized_metric(value)
+    }
+
+    if metric_name == "length_bp" {
+        return check_length_positive(value)
+    }
+
+    // Unknown metric - assume valid
+    true
+}
+
+/// Run all validation tests
+pub fn run_validation_tests() -> bool {
+    var all_passed = true
+
+    // Test epsilon validation
+    if !check_epsilon(0.0) { all_passed = false }
+    if !check_epsilon(0.5) { all_passed = false }
+    if check_epsilon(-0.1) { all_passed = false }  // Should be false
+
+    // Test confidence validation
+    if !check_confidence(0.0) { all_passed = false }
+    if !check_confidence(0.5) { all_passed = false }
+    if !check_confidence(1.0) { all_passed = false }
+    if check_confidence(-0.1) { all_passed = false }  // Should be false
+    if check_confidence(1.1) { all_passed = false }   // Should be false
+
+    // Test GC fraction
+    if !check_gc_fraction(0.5) { all_passed = false }
+    if check_gc_fraction(-0.1) { all_passed = false }
+
+    // Test orbit ratio
+    if !check_orbit_ratio(0.5) { all_passed = false }
+    if check_orbit_ratio(0.1) { all_passed = false }  // Below 0.25
+
+    all_passed
+}

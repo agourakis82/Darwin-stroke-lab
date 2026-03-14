@@ -1,0 +1,4 @@
+fn main() {
+    println("DARWIN_SOUNIO_PROBE_OK")
+    println(42)
+}

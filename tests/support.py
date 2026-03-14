@@ -134,3 +134,59 @@ def create_external_benchmark_manifest(tmp_path: Path) -> Path:
     manifest_path = tmp_path / "external_benchmark_manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return manifest_path
+
+
+def create_small_benchmark_manifest(tmp_path: Path) -> Path:
+    case_dir = tmp_path / "small_cases"
+    case_dir.mkdir(parents=True, exist_ok=True)
+    case_specs = [
+        ("mini-001", "train", "right", [], 0.20, 0.9),
+        ("mini-002", "train", "left", ["insula", "m2"], 0.24, 1.2),
+        ("mini-003", "train", "right", ["caudate"], 0.22, 1.0),
+        ("mini-004", "train", "left", ["m5"], 0.19, 0.8),
+        ("mini-005", "test", "right", [], 0.20, 0.9),
+        ("mini-006", "test", "left", ["m4"], 0.22, 1.1),
+    ]
+    manifest = {
+        "dataset_name": "fixture-mini-benchmark",
+        "dataset_version": "fixture-mini-v1",
+        "split_policy": "fixed train/test mini fixture",
+        "source": "local pytest mini fixture",
+        "cases": [],
+    }
+    for case_id, split, hemisphere, regions, lesion_drop, spread_sigma in case_specs:
+        volume_path, mask_path = _write_case(
+            case_dir,
+            case_id,
+            hemisphere,
+            regions,
+            lesion_drop=lesion_drop,
+            spread_sigma=spread_sigma,
+        )
+        manifest["cases"].append(
+            {
+                "case_id": case_id,
+                "split": split,
+                "volume_path": volume_path,
+                "lesion_mask_path": mask_path,
+                "hemisphere": hemisphere,
+                "aspects_score": 10 - len(regions),
+            }
+        )
+    manifest_path = tmp_path / "small_benchmark_manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    return manifest_path
+
+
+def create_study_file(tmp_path: Path) -> Path:
+    case_dir = tmp_path / "study_case"
+    case_dir.mkdir(parents=True, exist_ok=True)
+    volume_path, _ = _write_case(
+        case_dir,
+        "study-local",
+        "left",
+        ["insula", "m2"],
+        lesion_drop=0.24,
+        spread_sigma=1.1,
+    )
+    return Path(volume_path)

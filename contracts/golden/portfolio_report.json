@@ -1,0 +1,31 @@
+{
+  "campaigns": [
+    {
+      "best_run_id": "<best_run_id>",
+      "blocked_plan_count": 0,
+      "campaign_id": "<campaign_id>",
+      "completed_runs": 1,
+      "failed_runs": 0,
+      "leading_model": "sounio_hypercomplex",
+      "name": "rewrite-parity-campaign",
+      "ready_plan_count": 1,
+      "sounio_aspects_mae": 0.5,
+      "sounio_auc": 0.0,
+      "sounio_isles_dice": 0.5,
+      "status": "completed",
+      "top_plan_id": "<top_plan_id>",
+      "total_runs": 1,
+      "watch_plan_count": 0
+    }
+  ],
+  "completed_campaigns": 1,
+  "failed_campaigns": 0,
+  "generated_at": "<generated_at>",
+  "leading_campaign_id": "<leading_campaign_id>",
+  "next_actions": [
+    "Use campaign `rewrite-parity-campaign` as the current portfolio leader and prioritize plan `plan-winner-reproducibility-sweep` for the next launch."
+  ],
+  "portfolio_id": "campaign-portfolio",
+  "running_campaigns": 0,
+  "total_campaigns": 1
+}

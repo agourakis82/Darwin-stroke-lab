@@ -1,0 +1,27 @@
+{
+  "created_at": "<created_at>",
+  "error": "",
+  "executor": "benchmark-worker",
+  "job_id": "<job_id>",
+  "kind": "benchmark",
+  "owner_id": "<owner_id>",
+  "owner_type": "benchmark_run",
+  "queue_name": "local-benchmark",
+  "request_payload": {
+    "dataset_manifest_path": "<snapshot_root>/fixtures/small_benchmark_manifest.json",
+    "external_test_manifest_path": null,
+    "seed": 13,
+    "test_split": "test",
+    "train_split": "train"
+  },
+  "result_payload": {
+    "artifact_count": 28,
+    "artifact_prefix": "6a5d11c937cc404caacd502c6062fb27/",
+    "backend": "local",
+    "benchmark_run_id": "<benchmark_run_id>",
+    "cancel_requested": false,
+    "dataset_version": "fixture-mini-v1"
+  },
+  "status": "completed",
+  "updated_at": "<updated_at>"
+}

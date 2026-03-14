@@ -1,0 +1,31 @@
+{
+  "active_programs": 0,
+  "blocked_programs": 0,
+  "completed_programs": 1,
+  "generated_at": "<generated_at>",
+  "leading_program_id": "<leading_program_id>",
+  "next_actions": [
+    "Use program `rewrite-parity-program` as the current scientific lead and prioritize its ready campaign plans first."
+  ],
+  "portfolio_id": "program-portfolio",
+  "programs": [
+    {
+      "blocked_plan_count": 0,
+      "completed_campaigns": 1,
+      "failed_campaigns": 0,
+      "leading_campaign_id": "<leading_campaign_id>",
+      "leading_model": "sounio_hypercomplex",
+      "name": "rewrite-parity-program",
+      "program_id": "<program_id>",
+      "ready_plan_count": 1,
+      "running_campaigns": 0,
+      "sounio_aspects_mae": 0.5,
+      "sounio_auc": 0.0,
+      "sounio_isles_dice": 0.5,
+      "status": "completed",
+      "total_campaigns": 1,
+      "watch_plan_count": 0
+    }
+  ],
+  "total_programs": 1
+}

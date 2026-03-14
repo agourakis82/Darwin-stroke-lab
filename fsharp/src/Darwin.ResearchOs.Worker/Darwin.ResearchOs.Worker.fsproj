@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>darwin-research-os-worker</AssemblyName>
+    <UserSecretsId>dotnet-Darwin.ResearchOs.Worker-2692247e-4146-47a5-8610-2e63c0f8f82e</UserSecretsId>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <Compile Include="Worker.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Darwin.ResearchOs.Core\Darwin.ResearchOs.Core.fsproj" />
+    <ProjectReference Include="..\Darwin.ResearchOs.K8s\Darwin.ResearchOs.K8s.fsproj" />
+    <ProjectReference Include="..\Darwin.ResearchOs.Storage\Darwin.ResearchOs.Storage.fsproj" />
+  </ItemGroup>
+</Project>
