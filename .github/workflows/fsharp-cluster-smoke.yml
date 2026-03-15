@@ -43,6 +43,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Prepare local runner env
+        shell: bash
+        run: |
+          dotnet_root="${DOTNET_ROOT:-$HOME/.dotnet}"
+          source_root="${SOUNIO_SOURCE_ROOT:-$HOME/sounio-lang-sounio}"
+          binary_root="${SOUNIO_BINARY_ROOT:-$source_root}"
+          ssh_host="${DARWIN_RESEARCH_OS_SSH_HOST:-demetrios@DEVdesktop}"
+          worker_image="${DARWIN_RESEARCH_OS_WORKER_IMAGE:-darwin-research-os-worker:k3s-dev}"
+
+          echo "DOTNET_ROOT=${dotnet_root}" >> "$GITHUB_ENV"
+          echo "PATH=${dotnet_root}:$PATH" >> "$GITHUB_ENV"
+          echo "SOUNIO_SOURCE_ROOT=${source_root}" >> "$GITHUB_ENV"
+          echo "SOUNIO_BINARY_ROOT=${binary_root}" >> "$GITHUB_ENV"
+          echo "DARWIN_RESEARCH_OS_SSH_HOST=${ssh_host}" >> "$GITHUB_ENV"
+          echo "DARWIN_RESEARCH_OS_WORKER_IMAGE=${worker_image}" >> "$GITHUB_ENV"
+
       - name: Resolve smoke target
         id: target
         shell: bash
