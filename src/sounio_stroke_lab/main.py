@@ -5,7 +5,17 @@ from pathlib import Path
 from fastapi import FastAPI, File, HTTPException, UploadFile
 
 from sounio_stroke_lab.config import APP_NAME
-from sounio_stroke_lab.schemas import AnalysisResult, AnalyzeStudyRequest, BenchmarkRequest, BenchmarkRun, StudyRecord
+from sounio_stroke_lab.schemas import (
+    AnalysisResult,
+    AnalyzeStudyRequest,
+    BenchmarkRequest,
+    BenchmarkRun,
+    ResumeSummary,
+    RunEvent,
+    RunRecord,
+    RunSubmitRequest,
+    StudyRecord,
+)
 from sounio_stroke_lab.service import StrokeResearchService
 
 
@@ -49,6 +59,34 @@ def create_app(storage_root: Path | None = None) -> FastAPI:
     def get_benchmark_run(run_id: str) -> BenchmarkRun:
         try:
             return service.get_benchmark_run(run_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    @app.post("/runs", response_model=RunRecord, status_code=201)
+    def create_run(request: RunSubmitRequest) -> RunRecord:
+        try:
+            return service.submit_run(request)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @app.get("/runs/{run_id}", response_model=RunRecord)
+    def get_run(run_id: str) -> RunRecord:
+        try:
+            return service.get_run(run_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    @app.get("/runs/{run_id}/resume-summary", response_model=ResumeSummary)
+    def get_resume_summary(run_id: str) -> ResumeSummary:
+        try:
+            return service.get_resume_summary(run_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    @app.get("/runs/{run_id}/events", response_model=list[RunEvent])
+    def get_run_events(run_id: str) -> list[RunEvent]:
+        try:
+            return service.get_run_events(run_id)
         except KeyError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 

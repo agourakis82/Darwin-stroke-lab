@@ -10,6 +10,7 @@ from sounio_stroke_lab.benchmark import BenchmarkHarness
 from sounio_stroke_lab.config import DATASET_VERSION, FAIRNESS_POLICY, PIPELINE_VERSION, get_storage_root
 from sounio_stroke_lab.dataset_manifest import load_benchmark_manifest
 from sounio_stroke_lab.preprocessing import load_volume_from_paths, prepare_volume
+from sounio_stroke_lab.run_engine import RunEngine
 from sounio_stroke_lab.runners import build_runner
 from sounio_stroke_lab.schemas import (
     AnalysisResult,
@@ -19,6 +20,13 @@ from sounio_stroke_lab.schemas import (
     BenchmarkRun,
     InputMode,
     ModelFamily,
+    ResumeSummary,
+    RunEvent,
+    RunRecord,
+    RunStatus,
+    RunSubmitRequest,
+    StepRecord,
+    StepStatus,
     StudyRecord,
     StudyStatus,
 )
@@ -31,6 +39,7 @@ class StrokeResearchService:
         self.storage = StorageManager(storage_root or get_storage_root())
         self.storage.initialize()
         self.benchmark = BenchmarkHarness(self.storage)
+        self.runs = RunEngine(self.storage)
 
     async def create_study_from_uploads(self, uploads) -> StudyRecord:
         if not uploads:
@@ -110,6 +119,41 @@ class StrokeResearchService:
     def get_benchmark_run(self, run_id: str) -> BenchmarkRun:
         return self.storage.get_benchmark_run(run_id)
 
+    def submit_run(self, request: RunSubmitRequest) -> RunRecord:
+        return self.runs.submit(request)
+
+    def get_run(self, run_id: str) -> RunRecord:
+        return self.storage.get_run(run_id)
+
+    def get_run_events(self, run_id: str) -> list[RunEvent]:
+        self.storage.get_run(run_id)
+        return self.storage.list_run_events(run_id)
+
+    def get_resume_summary(self, run_id: str) -> ResumeSummary:
+        run = self.storage.get_run(run_id)
+        steps = self.storage.list_run_steps(run_id)
+        current_step = self._resolve_current_step(run.status, steps, run.current_step_seq)
+        last_completed_step = next((step for step in reversed(steps) if step.status == StepStatus.completed), None)
+        recent_artifacts = self.storage.list_run_artifacts(run_id, limit=5)
+        recent_events = self.storage.list_run_events(run_id, limit=10)
+        resume_instructions = self._resume_instructions(run, current_step)
+        operator_note = (
+            "M0.5 stores metadata in SQLite and artifacts on local disk for reference semantics. "
+            "M1 maps the same contract to PostgreSQL, Temporal, NATS JetStream, and CephFS consumed from external Proxmox/Ceph."
+        )
+        return ResumeSummary(
+            run_id=run_id,
+            status=run.status,
+            current_step=current_step,
+            last_completed_step=last_completed_step,
+            last_heartbeat_at=run.last_heartbeat_at,
+            workspace_uri=run.workspace_uri,
+            recent_artifacts=recent_artifacts,
+            recent_events=recent_events,
+            resume_instructions=resume_instructions,
+            operator_note=operator_note,
+        )
+
     def _persist_heatmap(self, study_id: str, model_family: ModelFamily | str, heatmap: np.ndarray) -> str:
         study_dir = self.storage.allocate_study_dir(study_id)
         model_name = model_family.value if hasattr(model_family, "value") else str(model_family)
@@ -185,3 +229,36 @@ class StrokeResearchService:
         except Exception:
             return DATASET_VERSION
         return manifest.dataset_version
+
+    def _resolve_current_step(
+        self,
+        status: RunStatus,
+        steps: list[StepRecord],
+        current_step_seq: int,
+    ) -> StepRecord | None:
+        if not steps:
+            return None
+        if current_step_seq:
+            matched = next((step for step in steps if step.seq == current_step_seq), None)
+            if matched is not None:
+                return matched
+        if status == RunStatus.completed:
+            return steps[-1]
+        for step in steps:
+            if step.status in {StepStatus.running, StepStatus.failed, StepStatus.pending}:
+                return step
+        return steps[-1]
+
+    def _resume_instructions(self, run: RunRecord, current_step: StepRecord | None) -> list[str]:
+        instructions = [
+            f"Re-open the workspace at {run.workspace_uri}.",
+            f"Run `labctl run resume {run.run_id}` for the latest durable summary.",
+            f"Inspect `{run.run_root_uri}` for checkpoints, logs, and artifacts.",
+        ]
+        if current_step is not None:
+            instructions.append(f"Current step: {current_step.seq} - {current_step.name}.")
+            if current_step.resume_hint:
+                instructions.append(current_step.resume_hint)
+        if run.status == RunStatus.failed and run.failure_reason:
+            instructions.append(f"Failure reason: {run.failure_reason}")
+        return instructions

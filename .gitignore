@@ -3,3 +3,16 @@
 __pycache__/
 *.pyc
 *.egg-info/
+.DS_Store
+.codex-run/
+.dev-smoke/
+.fsharp-cluster-smoke-objects/
+.k8s-battery/
+.local-battery/
+.rewrite-cache/
+.tmp/
+build/
+fsharp/**/bin/
+fsharp/**/obj/
+fsharp/cluster-sounio/bundle/
+fsharp/cluster-sounio/source/

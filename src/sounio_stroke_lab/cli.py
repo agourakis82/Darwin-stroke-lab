@@ -11,7 +11,7 @@ from sounio_stroke_lab.dataset_manifest import (
     build_isles24_manifest,
     validate_benchmark_manifest,
 )
-from sounio_stroke_lab.schemas import BenchmarkRequest
+from sounio_stroke_lab.schemas import BenchmarkRequest, RunSubmitRequest
 from sounio_stroke_lab.service import StrokeResearchService
 
 
@@ -56,6 +56,19 @@ def _build_parser() -> argparse.ArgumentParser:
     benchmark.add_argument("--train-split", default="train")
     benchmark.add_argument("--test-split", default="test")
     benchmark.add_argument("--seed", type=int, default=13)
+
+    run_submit = subparsers.add_parser("run-submit", help="Submit a generic agent run to the local reference backend.")
+    run_submit.add_argument("--storage-root")
+    run_submit.add_argument("--workspace-id")
+    run_submit.add_argument("--user-id", default="workspace-user")
+    run_submit.add_argument("--workspace-path", required=True)
+    run_submit.add_argument("--repo-path", required=True)
+    run_submit.add_argument("--task-name", default="inventory-workspace")
+    run_submit.add_argument("--parameter", action="append", dest="parameters")
+
+    run_resume = subparsers.add_parser("run-resume", help="Fetch the latest resume summary for a local run.")
+    run_resume.add_argument("run_id")
+    run_resume.add_argument("--storage-root")
 
     return parser
 
@@ -136,6 +149,35 @@ def main(argv: list[str] | None = None) -> int:
             )
         )
         print(json.dumps(run.model_dump(mode="json"), indent=2))
+        return 0
+
+    if args.command == "run-submit":
+        storage_root = Path(args.storage_root).expanduser().resolve() if args.storage_root else None
+        service = StrokeResearchService(storage_root=storage_root)
+        parameters = {}
+        for item in args.parameters or []:
+            key, _, value = item.partition("=")
+            if not key:
+                parser.error(f"Invalid --parameter value: {item}")
+            parameters[key] = value if value else "true"
+        run = service.submit_run(
+            RunSubmitRequest(
+                workspace_id=args.workspace_id,
+                user_id=args.user_id,
+                workspace_path=str(Path(args.workspace_path).expanduser().resolve()),
+                repo_path=str(Path(args.repo_path).expanduser().resolve()),
+                task_name=args.task_name,
+                parameters=parameters,
+            )
+        )
+        print(json.dumps(run.model_dump(mode="json"), indent=2))
+        return 0
+
+    if args.command == "run-resume":
+        storage_root = Path(args.storage_root).expanduser().resolve() if args.storage_root else None
+        service = StrokeResearchService(storage_root=storage_root)
+        summary = service.get_resume_summary(args.run_id)
+        print(json.dumps(summary.model_dump(mode="json"), indent=2))
         return 0
 
     parser.error(f"Unsupported command: {args.command}")

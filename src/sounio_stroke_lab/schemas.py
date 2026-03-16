@@ -207,3 +207,126 @@ class BenchmarkRequest(BaseModel):
     train_split: str = "train"
     test_split: str = "test"
     seed: int = 13
+
+
+class WorkflowKind(str, Enum):
+    generic_agent_task = "generic_agent_task"
+
+
+class RunStatus(str, Enum):
+    pending = "pending"
+    running = "running"
+    completed = "completed"
+    failed = "failed"
+
+
+class StepStatus(str, Enum):
+    pending = "pending"
+    running = "running"
+    completed = "completed"
+    failed = "failed"
+
+
+class ExecutorKind(str, Enum):
+    workspace = "workspace"
+    agent = "agent"
+    system = "system"
+
+
+class RunSubmitRequest(BaseModel):
+    model_config = ConfigDict(use_enum_values=True)
+
+    workspace_id: str | None = None
+    user_id: str = "workspace-user"
+    workflow_kind: WorkflowKind = WorkflowKind.generic_agent_task
+    workspace_path: str = "/workspace"
+    repo_path: str = "/workspace/src"
+    task_name: str = "inventory-workspace"
+    parameters: dict[str, Any] = Field(default_factory=dict)
+
+
+class RunRecord(BaseModel):
+    model_config = ConfigDict(use_enum_values=True)
+
+    run_id: str
+    workspace_id: str
+    user_id: str
+    workflow_kind: WorkflowKind
+    status: RunStatus
+    submitted_at: datetime = Field(default_factory=utc_now)
+    started_at: datetime | None = None
+    last_heartbeat_at: datetime | None = None
+    current_step_seq: int = 0
+    temporal_workflow_id: str
+    event_stream: str
+    run_root_uri: str
+    workspace_uri: str
+    repo_path: str
+    task_name: str
+    parameters: dict[str, Any] = Field(default_factory=dict)
+    resume_token: str
+    failure_reason: str | None = None
+
+
+class StepRecord(BaseModel):
+    model_config = ConfigDict(use_enum_values=True)
+
+    step_id: str
+    run_id: str
+    seq: int
+    name: str
+    executor_kind: ExecutorKind
+    status: StepStatus
+    attempt: int = 0
+    started_at: datetime | None = None
+    ended_at: datetime | None = None
+    last_heartbeat_at: datetime | None = None
+    checkpoint_uri: str | None = None
+    stdout_artifact_id: str | None = None
+    stderr_artifact_id: str | None = None
+    error_code: str | None = None
+    resume_hint: str | None = None
+
+
+class ArtifactRecord(BaseModel):
+    model_config = ConfigDict(use_enum_values=True)
+
+    artifact_id: str
+    run_id: str
+    step_id: str | None = None
+    kind: str
+    uri: str
+    content_type: str
+    size_bytes: int
+    sha256: str
+    created_at: datetime = Field(default_factory=utc_now)
+    is_checkpoint: bool = False
+    preview_text: str | None = None
+
+
+class RunEvent(BaseModel):
+    model_config = ConfigDict(use_enum_values=True)
+
+    event_id: str
+    run_id: str
+    seq: int
+    created_at: datetime = Field(default_factory=utc_now)
+    step_id: str | None = None
+    event_type: str
+    message: str
+    payload: dict[str, Any] = Field(default_factory=dict)
+
+
+class ResumeSummary(BaseModel):
+    model_config = ConfigDict(use_enum_values=True)
+
+    run_id: str
+    status: RunStatus
+    current_step: StepRecord | None = None
+    last_completed_step: StepRecord | None = None
+    last_heartbeat_at: datetime | None = None
+    workspace_uri: str
+    recent_artifacts: list[ArtifactRecord] = Field(default_factory=list)
+    recent_events: list[RunEvent] = Field(default_factory=list)
+    resume_instructions: list[str] = Field(default_factory=list)
+    operator_note: str | None = None

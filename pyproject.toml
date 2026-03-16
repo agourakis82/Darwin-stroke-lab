@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sounio-stroke-lab"
-version = "0.1.0"
+version = "0.2.0"
 description = "Local research and clinical scaffold for benchmarking Sounio hypercomplex stroke analysis."
 readme = "README.md"
 requires-python = ">=3.13"
@@ -28,6 +28,7 @@ dev = [
 
 [project.scripts]
 sounio-stroke-lab = "sounio_stroke_lab.cli:main"
+labctl = "sounio_stroke_lab.labctl:main"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

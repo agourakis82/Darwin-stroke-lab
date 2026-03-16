@@ -8,7 +8,8 @@ Base funcional para demonstrar, em ambiente local, a tese de que o framework `So
   - criar estudos a partir de DICOM, PNG/JPG ou `.npy` de pesquisa;
   - executar analise com o runner `Sounio` ou baselines comparativos;
   - consultar o ultimo resultado de um estudo;
-  - rodar benchmark comparativo completo e recuperar o relatorio.
+  - rodar benchmark comparativo completo e recuperar o relatorio;
+  - submeter `runs` duraveis de workspace/agent, consultar eventos e recuperar um resumo de retomada.
 - Pipeline comum e reproduzivel:
   - ingestao;
   - normalizacao estilo HU;
@@ -31,7 +32,9 @@ Base funcional para demonstrar, em ambiente local, a tese de que o framework `So
   - construir manifest de coorte DICOM local;
   - construir manifest a partir de CSV/JSONL;
   - validar manifest;
-  - disparar benchmark local.
+  - disparar benchmark local;
+  - submeter e retomar `runs` locais via `sounio-stroke-lab run-submit` / `run-resume`;
+  - operar a mesma superficie via `labctl`.
 - Integracao real com o compilador oficial `souc` quando ele estiver disponivel no sistema ou em um checkout local do repositório oficial.
 
 ## Importante
@@ -119,6 +122,46 @@ sounio-stroke-lab validate-manifest \
 
 ```bash
 uvicorn sounio_stroke_lab.main:app --reload
+```
+
+## Runs duraveis de workspace
+
+O release `0.2.0` adiciona uma superficie de referencia para `generic_agent_task` com tres etapas duraveis:
+
+1. capturar contexto do workspace;
+2. executar a tarefa do agente com checkpoints e heartbeats;
+3. escrever um resumo final de retomada.
+
+Superficie HTTP:
+
+- `POST /runs`
+- `GET /runs/{run_id}`
+- `GET /runs/{run_id}/resume-summary`
+- `GET /runs/{run_id}/events`
+
+CLI local rapida:
+
+```bash
+sounio-stroke-lab run-submit \
+  --workspace-path /abs/path/to/workspace \
+  --repo-path /abs/path/to/workspace/src \
+  --task-name inventory-workspace
+```
+
+```bash
+sounio-stroke-lab run-resume <run_id>
+```
+
+Helper equivalente:
+
+```bash
+labctl run submit \
+  --workspace-path /abs/path/to/workspace \
+  --repo-path /abs/path/to/workspace/src
+```
+
+```bash
+labctl run resume <run_id>
 ```
 
 ## Rodar testes
