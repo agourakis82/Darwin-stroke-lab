@@ -1,0 +1,17 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: nats
+  namespace: kube-system
+spec:
+  repo: https://nats-io.github.io/k8s/helm/charts/
+  chart: nats
+  targetNamespace: messaging
+  createNamespace: true
+  valuesContent: |-
+    config:
+      jetstream:
+        enabled: true
+    nats:
+      jetstream:
+        enabled: true

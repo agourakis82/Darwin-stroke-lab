@@ -1,0 +1,31 @@
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: replicapool
+  namespace: rook-ceph
+spec:
+  replicated:
+    size: 3
+  failureDomain: host
+---
+apiVersion: ceph.rook.io/v1
+kind: CephFilesystem
+metadata:
+  name: workspacefs
+  namespace: rook-ceph
+spec:
+  metadataPool:
+    replicated:
+      size: 3
+  dataPools:
+    - name: workspace-data
+      failureDomain: host
+      replicated:
+        size: 3
+  metadataServer:
+    activeCount: 2
+    activeStandby: true
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "1Gi"

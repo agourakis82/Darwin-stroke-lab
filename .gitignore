@@ -16,3 +16,5 @@ fsharp/**/bin/
 fsharp/**/obj/
 fsharp/cluster-sounio/bundle/
 fsharp/cluster-sounio/source/
+infra/m1/audit/
+infra/**/*.orig

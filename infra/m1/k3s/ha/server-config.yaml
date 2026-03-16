@@ -1,0 +1,16 @@
+token: "REPLACE_WITH_SHARED_K3S_TOKEN"
+cluster-init: true
+disable:
+  - servicelb
+write-kubeconfig-mode: "0644"
+tls-san:
+  - "k3s-api.lab.internal"
+  - "REPLACE_WITH_API_VIP"
+node-label:
+  - "lab.sounio.io/plane=control"
+kube-apiserver-arg:
+  - "feature-gates=GracefulNodeShutdown=true"
+kube-controller-manager-arg:
+  - "node-monitor-grace-period=20s"
+kubelet-arg:
+  - "eviction-hard=imagefs.available<10%,nodefs.available<10%"

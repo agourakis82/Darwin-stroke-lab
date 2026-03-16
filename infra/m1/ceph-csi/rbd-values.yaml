@@ -1,0 +1,13 @@
+nodeplugin:
+  nodeSelector:
+    kubernetes.io/os: linux
+provisioner:
+  replicaCount: 2
+  nodeSelector:
+    lab.sounio.io/plane: service
+secret:
+  create: false
+storageClass:
+  create: false
+externallyManagedConfigmap: true
+configMapName: ceph-csi-config

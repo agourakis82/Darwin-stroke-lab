@@ -1,0 +1,26 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: coder-wildcard
+  namespace: coder
+spec:
+  secretName: coder-wildcard-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: m1-internal-ca
+  dnsNames:
+    - coder.lab.internal
+    - "*.coder.lab.internal"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: registry-internal
+  namespace: registry
+spec:
+  secretName: registry-internal-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: m1-internal-ca
+  dnsNames:
+    - registry.lab.internal

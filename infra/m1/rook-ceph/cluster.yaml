@@ -1,0 +1,62 @@
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph
+  namespace: rook-ceph
+spec:
+  cephVersion:
+    image: quay.io/ceph/ceph:v19
+  dataDirHostPath: /var/lib/rook
+  mon:
+    count: 3
+    allowMultiplePerNode: false
+  mgr:
+    count: 2
+    allowMultiplePerNode: false
+  dashboard:
+    enabled: true
+    ssl: true
+  network:
+    provider: host
+  crashCollector:
+    disable: false
+  storage:
+    useAllNodes: false
+    useAllDevices: false
+    nodes:
+      - name: storage-1
+        deviceFilter: "^sd[b-z]$"
+      - name: storage-2
+        deviceFilter: "^sd[b-z]$"
+      - name: storage-3
+        deviceFilter: "^sd[b-z]$"
+  placement:
+    all:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: storage.ceph.io/enabled
+                  operator: In
+                  values: ["true"]
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+  resources:
+    mgr:
+      requests:
+        cpu: "500m"
+        memory: "1Gi"
+    mon:
+      requests:
+        cpu: "500m"
+        memory: "1Gi"
+    osd:
+      requests:
+        cpu: "1000m"
+        memory: "2Gi"
+  priorityClassNames:
+    mon: lab-cluster-critical
+    osd: lab-cluster-critical
+    mgr: lab-cluster-critical

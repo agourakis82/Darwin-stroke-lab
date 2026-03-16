@@ -1,0 +1,15 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: temporal
+  namespace: kube-system
+spec:
+  repo: https://go.temporal.io/helm-charts
+  chart: temporal
+  targetNamespace: orchestration
+  createNamespace: true
+  valuesContent: |-
+    cassandra:
+      enabled: false
+    prometheus:
+      enabled: false

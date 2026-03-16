@@ -1,0 +1,26 @@
+config:
+  cluster:
+    enabled: true
+    replicas: 3
+  jetstream:
+    enabled: true
+    fileStore:
+      pvc:
+        enabled: true
+        storageClassName: proxmox-ceph-rbd
+        size: 100Gi
+    memoryStore:
+      enabled: true
+      maxSize: 2Gi
+container:
+  env:
+    GOMEMLIMIT: 1024MiB
+nats:
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  nodeSelector:
+    lab.sounio.io/plane: service
+promExporter:
+  enabled: false

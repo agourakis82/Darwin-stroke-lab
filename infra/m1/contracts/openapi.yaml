@@ -1,0 +1,263 @@
+openapi: 3.1.0
+info:
+  title: Sounio Lab Resume API
+  version: 0.1.0
+paths:
+  /runs:
+    post:
+      summary: Submit a generic agent run
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunSubmitRequest"
+      responses:
+        "201":
+          description: Run accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunRecord"
+  /runs/{run_id}:
+    get:
+      summary: Get durable run metadata
+      parameters:
+        - in: path
+          name: run_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Current run
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunRecord"
+  /runs/{run_id}/resume-summary:
+    get:
+      summary: Get the latest resume surface for reconnect
+      parameters:
+        - in: path
+          name: run_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Resume summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResumeSummary"
+  /runs/{run_id}/events:
+    get:
+      summary: Replay recent run events
+      parameters:
+        - in: path
+          name: run_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ordered recent events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RunEvent"
+components:
+  schemas:
+    RunSubmitRequest:
+      type: object
+      required: [workspace_path, repo_path, task_name]
+      properties:
+        workspace_id:
+          type: string
+          nullable: true
+        user_id:
+          type: string
+        workflow_kind:
+          type: string
+          enum: [generic_agent_task]
+        workspace_path:
+          type: string
+        repo_path:
+          type: string
+        task_name:
+          type: string
+        parameters:
+          type: object
+          additionalProperties: true
+    RunRecord:
+      type: object
+      required:
+        - run_id
+        - workspace_id
+        - user_id
+        - workflow_kind
+        - status
+        - submitted_at
+        - current_step_seq
+        - temporal_workflow_id
+        - event_stream
+        - run_root_uri
+        - workspace_uri
+        - repo_path
+        - task_name
+        - resume_token
+      properties:
+        run_id: {type: string}
+        workspace_id: {type: string}
+        user_id: {type: string}
+        workflow_kind:
+          type: string
+          enum: [generic_agent_task]
+        status:
+          type: string
+          enum: [pending, running, completed, failed]
+        submitted_at:
+          type: string
+          format: date-time
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_heartbeat_at:
+          type: string
+          format: date-time
+          nullable: true
+        current_step_seq: {type: integer}
+        temporal_workflow_id: {type: string}
+        event_stream: {type: string}
+        run_root_uri: {type: string}
+        workspace_uri: {type: string}
+        repo_path: {type: string}
+        task_name: {type: string}
+        parameters:
+          type: object
+          additionalProperties: true
+        resume_token: {type: string}
+        failure_reason:
+          type: string
+          nullable: true
+    StepRecord:
+      type: object
+      required: [step_id, run_id, seq, name, executor_kind, status, attempt]
+      properties:
+        step_id: {type: string}
+        run_id: {type: string}
+        seq: {type: integer}
+        name: {type: string}
+        executor_kind:
+          type: string
+          enum: [workspace, agent, system]
+        status:
+          type: string
+          enum: [pending, running, completed, failed]
+        attempt: {type: integer}
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+        ended_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_heartbeat_at:
+          type: string
+          format: date-time
+          nullable: true
+        checkpoint_uri:
+          type: string
+          nullable: true
+        stdout_artifact_id:
+          type: string
+          nullable: true
+        stderr_artifact_id:
+          type: string
+          nullable: true
+        error_code:
+          type: string
+          nullable: true
+        resume_hint:
+          type: string
+          nullable: true
+    ArtifactRecord:
+      type: object
+      required: [artifact_id, run_id, kind, uri, content_type, size_bytes, sha256, created_at, is_checkpoint]
+      properties:
+        artifact_id: {type: string}
+        run_id: {type: string}
+        step_id:
+          type: string
+          nullable: true
+        kind: {type: string}
+        uri: {type: string}
+        content_type: {type: string}
+        size_bytes: {type: integer}
+        sha256: {type: string}
+        created_at:
+          type: string
+          format: date-time
+        is_checkpoint: {type: boolean}
+        preview_text:
+          type: string
+          nullable: true
+    RunEvent:
+      type: object
+      required: [event_id, run_id, seq, created_at, event_type, message]
+      properties:
+        event_id: {type: string}
+        run_id: {type: string}
+        seq: {type: integer}
+        created_at:
+          type: string
+          format: date-time
+        step_id:
+          type: string
+          nullable: true
+        event_type: {type: string}
+        message: {type: string}
+        payload:
+          type: object
+          additionalProperties: true
+    ResumeSummary:
+      type: object
+      required: [run_id, status, workspace_uri, recent_artifacts, recent_events, resume_instructions]
+      properties:
+        run_id: {type: string}
+        status:
+          type: string
+          enum: [pending, running, completed, failed]
+        current_step:
+          allOf:
+            - $ref: "#/components/schemas/StepRecord"
+          nullable: true
+        last_completed_step:
+          allOf:
+            - $ref: "#/components/schemas/StepRecord"
+          nullable: true
+        last_heartbeat_at:
+          type: string
+          format: date-time
+          nullable: true
+        workspace_uri: {type: string}
+        recent_artifacts:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArtifactRecord"
+        recent_events:
+          type: array
+          items:
+            $ref: "#/components/schemas/RunEvent"
+        resume_instructions:
+          type: array
+          items:
+            type: string
+        operator_note:
+          type: string
+          nullable: true

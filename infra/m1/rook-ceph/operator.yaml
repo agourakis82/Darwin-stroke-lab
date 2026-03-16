@@ -1,0 +1,26 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: rook-ceph
+  namespace: kube-system
+spec:
+  repo: https://charts.rook.io/release
+  chart: rook-ceph
+  targetNamespace: rook-ceph
+  createNamespace: true
+  valuesContent: |-
+    crds:
+      enabled: true
+    csi:
+      enableCSIHostNetwork: true
+    monitoring:
+      enabled: false
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    priorityClassName: lab-cluster-critical
+    nodeSelector:
+      lab.sounio.io/plane: service

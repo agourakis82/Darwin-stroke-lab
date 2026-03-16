@@ -1,0 +1,30 @@
+# Fill this file before touching the K3s HA bootstrap.
+
+cluster_name: sounio-m1
+internal_zone: lab.internal
+
+control_plane:
+  api_dns_name: k3s-api.lab.internal
+  api_vip: REPLACE_WITH_API_VIP_ON_192_168_3_0_24
+  vip_network: 192.168.3.0/24
+  vip_interface: vmbr0
+  kube_vip_mode: arp
+  kube_vip_image: ghcr.io/kube-vip/kube-vip:v0.8.1
+  server_nodes:
+    - t560-proxmox
+    - r740-proxmox
+    - 5860-proxmox
+  worker_nodes:
+    - r770-proxmox
+  tls_sans:
+    - k3s-api.lab.internal
+    - REPLACE_WITH_API_VIP_ON_192_168_3_0_24
+
+k3s:
+  shared_token_secret_name: k3s-shared-token
+  ingress_class: traefik
+
+notes:
+  - Keep the VIP on the management network only.
+  - Do not assign the VIP until DNS can resolve the chosen API name.
+  - Update server-config.yaml and kube-vip-daemonset.yaml from this file.

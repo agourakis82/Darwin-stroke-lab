@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: run-event-streams
+  namespace: messaging
+data:
+  run-events.json: |
+    {
+      "name": "RUN_EVENTS",
+      "subjects": ["runs.*"],
+      "retention": "limits",
+      "max_consumers": -1,
+      "max_msgs_per_subject": -1,
+      "max_age": 604800000000000,
+      "storage": "file",
+      "num_replicas": 3,
+      "discard": "old"
+    }
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ensure-run-events-stream
+  namespace: messaging
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      nodeSelector:
+        lab.sounio.io/plane: service
+      containers:
+        - name: nats
+          image: natsio/nats-box:0.15.0
+          command:
+            - sh
+            - -lc
+            - |
+              until nats --server nats://nats.messaging.svc.cluster.local:4222 account info >/dev/null 2>&1; do
+                sleep 2
+              done
+              nats --server nats://nats.messaging.svc.cluster.local:4222 stream add --config /config/run-events.json RUN_EVENTS || \
+              nats --server nats://nats.messaging.svc.cluster.local:4222 stream update --config /config/run-events.json RUN_EVENTS
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          configMap:
+            name: run-event-streams

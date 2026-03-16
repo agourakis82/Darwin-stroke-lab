@@ -1,0 +1,37 @@
+cassandra:
+  enabled: false
+elasticsearch:
+  enabled: false
+prometheus:
+  enabled: false
+server:
+  replicaCount: 3
+  config:
+    persistence:
+      default:
+        driver: sql
+        sql:
+          pluginName: postgres12
+          host: lab-postgres-rw.postgres.svc.cluster.local
+          port: 5432
+          database: temporal
+          user: temporal
+          existingSecret: temporal-db-url
+      visibility:
+        driver: sql
+        sql:
+          pluginName: postgres12
+          host: lab-postgres-rw.postgres.svc.cluster.local
+          port: 5432
+          database: temporal_visibility
+          user: temporal
+          existingSecret: temporal-db-url
+  nodeSelector:
+    lab.sounio.io/plane: service
+web:
+  nodeSelector:
+    lab.sounio.io/plane: service
+admintools:
+  enabled: true
+  nodeSelector:
+    lab.sounio.io/plane: service

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-run-worker
+  namespace: lab-system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: lab-run-worker
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: lab-run-worker
+    spec:
+      serviceAccountName: default
+      nodeSelector:
+        lab.sounio.io/plane: service
+      containers:
+        - name: worker
+          image: registry.lab.internal/sounio/lab-runner:toolchain-v1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TEMPORAL_ADDRESS
+              value: temporal-frontend.orchestration.svc.cluster.local:7233
+            - name: TEMPORAL_NAMESPACE
+              value: sounio-lab
+            - name: TEMPORAL_TASK_QUEUE
+              value: generic-agent-task
+            - name: NATS_URL
+              value: nats://nats.messaging.svc.cluster.local:4222
+            - name: LAB_RUNS_DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: lab-runs-db-url
+                  key: url
+          volumeMounts:
+            - name: worker-cache
+              mountPath: /var/lib/lab-runner
+      volumes:
+        - name: worker-cache
+          emptyDir: {}

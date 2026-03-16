@@ -1,0 +1,17 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: cloudnative-pg
+  namespace: kube-system
+spec:
+  repo: https://cloudnative-pg.github.io/charts
+  chart: cloudnative-pg
+  targetNamespace: postgres
+  createNamespace: true
+  valuesContent: |-
+    config:
+      data:
+        INHERITED_ANNOTATIONS: "lab.sounio.io/plane"
+    nodeSelector:
+      lab.sounio.io/plane: service
+    tolerations: []

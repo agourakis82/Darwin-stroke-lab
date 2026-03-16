@@ -1,0 +1,31 @@
+coder:
+  serviceAccount:
+    create: true
+    name: coder-control-plane
+  env:
+    - name: CODER_ACCESS_URL
+      value: https://coder.lab.internal
+    - name: CODER_WILDCARD_ACCESS_URL
+      value: "*.coder.lab.internal"
+    - name: CODER_PG_CONNECTION_URL
+      valueFrom:
+        secretKeyRef:
+          name: coder-db-url
+          key: url
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      memory: 2Gi
+  nodeSelector:
+    lab.sounio.io/plane: service
+  tolerations: []
+ingress:
+  enable: true
+  className: traefik
+  host: coder.lab.internal
+  tls:
+    enable: true
+postgresql:
+  enabled: false

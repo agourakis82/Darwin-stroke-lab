@@ -1,0 +1,39 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: lab-postgres
+  namespace: postgres
+spec:
+  instances: 3
+  primaryUpdateStrategy: unsupervised
+  storage:
+    size: 50Gi
+    storageClass: proxmox-ceph-rbd
+  walStorage:
+    size: 50Gi
+    storageClass: proxmox-ceph-rbd
+  monitoring:
+    enablePodMonitor: false
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname
+  nodeSelector:
+    lab.sounio.io/plane: service
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+  bootstrap:
+    initdb:
+      database: app
+      owner: app
+      secret:
+        name: lab-postgres-app
+  managed:
+    roles:
+      - name: coder
+        login: true
+      - name: temporal
+        login: true
+      - name: lab_runs
+        login: true
