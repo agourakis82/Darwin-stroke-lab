@@ -17,8 +17,30 @@ from sounio_stroke_lab.schemas import BenchmarkCaseManifest, BenchmarkDatasetMan
 
 MASK_SUFFIXES = (".npy", ".npz", ".nii", ".nii.gz")
 VOLUME_SUFFIXES = (".npy", ".npz", ".nii", ".nii.gz", ".dcm")
+STACK_IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff")
 DICOM_DIR_NAMES = ("dicom", "DICOM", "ncct", "NCCT", "series", "SERIES")
 AISD_FIXED_TEST_IDS = {25, 29, 32, 35, 37, 43, 44, 63, 71, 83, 108, 134, 135, 159, 164, 201, 202, 211, 217, 221}
+
+
+def _infer_reference_scope(metadata: dict[str, object]) -> str:
+    explicit = metadata.get("reference_scope")
+    if isinstance(explicit, str) and explicit:
+        return explicit
+    if metadata.get("volume_kind") == "png-stack" and metadata.get("source_layout") == "AISD image/mask export":
+        return "segmentation_only"
+    return "full_benchmark"
+
+
+def _reference_flag(metadata: dict[str, object], key: str, default: bool) -> bool:
+    explicit = metadata.get(key)
+    if isinstance(explicit, bool):
+        return explicit
+    scope = _infer_reference_scope(metadata)
+    if scope == "segmentation_only":
+        if key == "segmentation_reference_available":
+            return True
+        return False
+    return default
 
 
 def _supports_nibabel() -> bool:
@@ -96,16 +118,22 @@ def _extract_dicom_series_metadata(dicom_dir: Path) -> dict[str, object]:
     return {key: value for key, value in metadata.items() if value not in {None, 0, 0.0, [], ""}}
 
 
-def _load_volume(path: Path) -> tuple[np.ndarray, float]:
+def _load_volume(path: Path, *, treat_as_mask: bool = False) -> tuple[np.ndarray, float]:
     suffix = path.suffix.lower()
     if suffix == ".npy" or suffix == ".npz":
-        return _load_npy(path), 1.0
+        array = _load_npy(path)
+        if treat_as_mask:
+            array = (array > 0.0).astype(np.float32)
+        return array, 1.0
     if suffix == ".nii" or path.name.endswith(".nii.gz"):
-        return _load_nifti(path)
+        array, voxel_volume_ml = _load_nifti(path)
+        if treat_as_mask:
+            array = (array > 0.0).astype(np.float32)
+        return array, voxel_volume_ml
     if path.is_dir():
         dicom_paths = sorted(candidate for candidate in path.iterdir() if candidate.is_file())
-        return load_volume_from_paths(dicom_paths).volume, _dicom_voxel_volume_ml(dicom_paths)
-    return load_volume_from_paths([path]).volume, _dicom_voxel_volume_ml([path] if path.suffix.lower() == ".dcm" else [])
+        return load_volume_from_paths(dicom_paths, treat_as_mask=treat_as_mask).volume, _dicom_voxel_volume_ml(dicom_paths)
+    return load_volume_from_paths([path], treat_as_mask=treat_as_mask).volume, _dicom_voxel_volume_ml([path] if path.suffix.lower() == ".dcm" else [])
 
 
 def _strip_all_suffixes(path: Path) -> str:
@@ -203,10 +231,25 @@ class LoadedBenchmarkCase:
     volume_path: Path
     lesion_mask_path: Path
     metadata: dict[str, object]
+    reference_scope: str
+    segmentation_reference_available: bool
+    hemisphere_reference_available: bool
+    region_reference_available: bool
+    aspects_reference_available: bool
 
     @property
     def affected_regions(self) -> list[str]:
         return sorted(affected_regions_from_mask(self.lesion_mask, self.hemisphere))
+
+    @property
+    def reference_regions(self) -> list[str]:
+        if not self.region_reference_available:
+            return []
+        return self.affected_regions
+
+    @property
+    def lesion_positive(self) -> bool:
+        return bool(np.asarray(self.lesion_mask > 0.25, dtype=bool).any())
 
 
 def load_benchmark_manifest(manifest_path: Path) -> BenchmarkDatasetManifest:
@@ -259,10 +302,27 @@ def load_manifest_cases(manifest_path: Path, split: str = "test") -> tuple[Bench
         volume_path = _resolve_path(manifest_path, item.volume_path)
         mask_path = _resolve_path(manifest_path, item.lesion_mask_path)
         volume, _ = _load_volume(volume_path)
-        lesion_mask, voxel_volume_ml = _load_volume(mask_path)
+        lesion_mask, voxel_volume_ml = _load_volume(mask_path, treat_as_mask=True)
         hemisphere = item.hemisphere or _infer_hemisphere(lesion_mask)
         derived_regions = affected_regions_from_mask(lesion_mask, hemisphere)
         aspects_score = item.aspects_score if item.aspects_score is not None else len(ATLAS_REGIONS) - len(derived_regions)
+        reference_scope = _infer_reference_scope(item.metadata)
+        segmentation_reference_available = _reference_flag(item.metadata, "segmentation_reference_available", True)
+        hemisphere_reference_available = _reference_flag(
+            item.metadata,
+            "hemisphere_reference_available",
+            item.hemisphere is not None,
+        )
+        region_reference_available = _reference_flag(
+            item.metadata,
+            "region_reference_available",
+            item.hemisphere is not None and item.aspects_score is not None,
+        )
+        aspects_reference_available = _reference_flag(
+            item.metadata,
+            "aspects_reference_available",
+            item.aspects_score is not None,
+        )
         cases.append(
             LoadedBenchmarkCase(
                 case_id=item.case_id,
@@ -275,6 +335,11 @@ def load_manifest_cases(manifest_path: Path, split: str = "test") -> tuple[Bench
                 volume_path=volume_path,
                 lesion_mask_path=mask_path,
                 metadata=item.metadata,
+                reference_scope=reference_scope,
+                segmentation_reference_available=segmentation_reference_available,
+                hemisphere_reference_available=hemisphere_reference_available,
+                region_reference_available=region_reference_available,
+                aspects_reference_available=aspects_reference_available,
             )
         )
     return manifest, cases
@@ -376,12 +441,67 @@ def build_aisd_manifest(
     dataset_version: str = "aisd-manifest-v1",
     source: str = "https://github.com/GriffinLiang/AISD",
 ) -> Path:
+    split_policy = "AISD fixed public test ids, remaining cases marked as train"
+
+    def finalize_manifest(entries: list[BenchmarkCaseManifest]) -> Path:
+        nonlocal split_policy
+        if entries and not any(entry.split == "test" for entry in entries):
+            split_policy = "stable subject hash 70/15/15 fallback for AISD exports without public fixed test ids"
+            entries = [
+                entry.model_copy(update={"split": _stable_split(entry.case_id)})
+                for entry in entries
+            ]
+        manifest = BenchmarkDatasetManifest(
+            dataset_name=dataset_name,
+            dataset_version=dataset_version,
+            split_policy=split_policy,
+            source=source,
+            cases=entries,
+        )
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(manifest.model_dump_json(indent=2), encoding="utf-8")
+        return output_path
+
+    def has_stack_images(case_dir: Path) -> bool:
+        return case_dir.is_dir() and any(
+            child.is_file() and child.suffix.lower() in STACK_IMAGE_SUFFIXES
+            for child in case_dir.iterdir()
+        )
+
+    entries: list[BenchmarkCaseManifest] = []
+    image_dirs = {path.name: path for path in sorted(image_root.iterdir()) if has_stack_images(path)}
+    mask_dirs = {path.name: path for path in sorted(mask_root.iterdir()) if has_stack_images(path)}
+    shared_case_ids = sorted(set(image_dirs) & set(mask_dirs))
+    for case_id in shared_case_ids:
+        numeric_case_id = "".join(character for character in case_id if character.isdigit())
+        split = "test" if numeric_case_id and int(numeric_case_id) in AISD_FIXED_TEST_IDS else "train"
+        entries.append(
+            BenchmarkCaseManifest(
+                case_id=case_id,
+                split=split,
+                volume_path=str(image_dirs[case_id].resolve()),
+                lesion_mask_path=str(mask_dirs[case_id].resolve()),
+                metadata={
+                    "dataset": dataset_name,
+                    "volume_kind": "png-stack",
+                    "source_layout": "AISD image/mask export",
+                    "reference_scope": "segmentation_only",
+                    "segmentation_reference_available": True,
+                    "hemisphere_reference_available": False,
+                    "region_reference_available": False,
+                    "aspects_reference_available": False,
+                },
+            )
+        )
+    if entries:
+        return finalize_manifest(entries)
+
     mask_by_id: dict[str, Path] = {}
     for path in sorted(mask_root.rglob("*")):
         if path.is_file() and path.name.endswith(MASK_SUFFIXES):
             mask_by_id[_strip_all_suffixes(path)] = path
 
-    entries: list[BenchmarkCaseManifest] = []
+    entries = []
     for volume_path in sorted(image_root.rglob("*")):
         if not volume_path.is_file() or not volume_path.name.endswith(MASK_SUFFIXES):
             continue
@@ -406,16 +526,7 @@ def build_aisd_manifest(
         )
     if not entries:
         raise ValueError(f"No paired AISD image/mask cases found under {image_root} and {mask_root}.")
-    manifest = BenchmarkDatasetManifest(
-        dataset_name=dataset_name,
-        dataset_version=dataset_version,
-        split_policy="AISD fixed public test ids, remaining cases marked as train",
-        source=source,
-        cases=entries,
-    )
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(manifest.model_dump_json(indent=2), encoding="utf-8")
-    return output_path
+    return finalize_manifest(entries)
 
 
 def build_index_manifest(

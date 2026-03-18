@@ -234,7 +234,12 @@ def build_tripod_ai_checklist(
 def _comparison_sentence(comparison_name: str, comparison: BenchmarkComparison) -> str:
     auc_gain = comparison.metrics.get("auc_gain")
     dice_gain = comparison.metrics.get("dice_gain")
-    if auc_gain is None or dice_gain is None:
+    if (
+        auc_gain is None
+        or dice_gain is None
+        or not isinstance(auc_gain.delta, (int, float))
+        or not isinstance(dice_gain.delta, (int, float))
+    ):
         return f"Sounio was compared against {comparison_name}."
     return (
         f"Against {comparison_name}, Sounio showed AUC delta {auc_gain.delta:.3f} "
@@ -262,6 +267,13 @@ def render_manuscript_draft(
     auc = sounio_metrics.get("auc", {}).get("value", "n/a")
     dice = sounio_metrics.get("isles_dice", {}).get("value", "n/a")
     aspects_mae = sounio_metrics.get("aspects_mae", {}).get("value", "n/a")
+    evaluation_scope = run.evaluation_scope.get("test", {}) if isinstance(run.evaluation_scope, dict) else {}
+    limitations = (
+        "The current benchmark uses NCCT-derived features only, even when manifests expose additional CTA/CTP or clinical metadata. "
+        "The ASPECTS atlas remains synthetic and should be replaced by a validated anatomical registration pipeline for definitive studies."
+    )
+    if isinstance(evaluation_scope, dict) and evaluation_scope.get("aspects_reference_cases", 0) < evaluation_scope.get("case_count", 0):
+        limitations += " This dataset export is segmentation-first; ASPECTS, hemisphere and atlas-region truth are unsupported for some or all test cases, so those metrics are reported as n/a."
 
     return f"""# Draft Manuscript
 
@@ -295,7 +307,7 @@ The Sounio arm achieved ASPECTS MAE {aspects_mae}, AUC {auc} and Dice {dice} on 
 
 ### Limitations
 
-The current benchmark uses NCCT-derived features only, even when manifests expose additional CTA/CTP or clinical metadata. The ASPECTS atlas remains synthetic and should be replaced by a validated anatomical registration pipeline for definitive studies.
+{limitations}
 
 ## Methods
 

@@ -1,0 +1,47 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY fsharp ./fsharp
+COPY sounio/kernels ./sounio/kernels
+
+RUN dotnet restore ./fsharp/src/Darwin.ResearchOs.Worker/Darwin.ResearchOs.Worker.fsproj
+RUN dotnet publish ./fsharp/src/Darwin.ResearchOs.Worker/Darwin.ResearchOs.Worker.fsproj \
+    -c Release \
+    -r linux-x64 \
+    --self-contained false \
+    /p:UseAppHost=true \
+    -o /out
+
+FROM rust:1.88-bookworm AS sounio-build
+WORKDIR /stage
+
+COPY fsharp/cluster-sounio /stage
+
+RUN set -eu; \
+    mkdir -p /bundle; \
+    if [ -f /stage/bundle/compiler/target/release/souc ]; then \
+      cp -R /stage/bundle/. /bundle/; \
+      if [ -f /stage/source/runtime/Cargo.toml ] && [ ! -f /bundle/runtime/target/release/libsounio_runtime.so ]; then \
+        cargo build --manifest-path /stage/source/runtime/Cargo.toml --release; \
+        mkdir -p /bundle/runtime/target/release; \
+        cp /stage/source/runtime/target/release/libsounio_runtime.so /bundle/runtime/target/release/libsounio_runtime.so; \
+      fi; \
+    elif [ -f /stage/source/compiler/Cargo.toml ]; then \
+      cargo build --manifest-path /stage/source/compiler/Cargo.toml --release; \
+      cargo build --manifest-path /stage/source/runtime/Cargo.toml --release; \
+      mkdir -p /bundle/compiler/target/release; \
+      mkdir -p /bundle/runtime/target/release; \
+      cp /stage/source/compiler/target/release/souc /bundle/compiler/target/release/souc; \
+      cp /stage/source/runtime/target/release/libsounio_runtime.so /bundle/runtime/target/release/libsounio_runtime.so; \
+      cp -R /stage/source/stdlib /bundle/stdlib; \
+      if [ -d /stage/source/self-hosted ]; then cp -R /stage/source/self-hosted /bundle/self-hosted; fi; \
+    fi
+
+FROM mcr.microsoft.com/dotnet/runtime:8.0
+WORKDIR /app
+
+COPY --from=build /out ./
+COPY --from=build /src/sounio/kernels /app/sounio/kernels
+COPY --from=sounio-build /bundle /opt/sounio
+
+ENTRYPOINT ["./darwin-research-os-worker"]

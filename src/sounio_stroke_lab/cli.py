@@ -56,6 +56,8 @@ def _build_parser() -> argparse.ArgumentParser:
     benchmark.add_argument("--train-split", default="train")
     benchmark.add_argument("--test-split", default="test")
     benchmark.add_argument("--seed", type=int, default=13)
+    benchmark.add_argument("--target-shape", nargs=3, type=int, metavar=("Z", "Y", "X"))
+    benchmark.add_argument("--segmentation-threshold", type=float)
 
     run_submit = subparsers.add_parser("run-submit", help="Submit a generic agent run to the local reference backend.")
     run_submit.add_argument("--storage-root")
@@ -146,6 +148,8 @@ def main(argv: list[str] | None = None) -> int:
                 train_split=args.train_split,
                 test_split=args.test_split,
                 seed=args.seed,
+                target_shape=tuple(args.target_shape) if args.target_shape else None,
+                segmentation_threshold=args.segmentation_threshold,
             )
         )
         print(json.dumps(run.model_dump(mode="json"), indent=2))

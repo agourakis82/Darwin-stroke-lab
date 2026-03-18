@@ -18,19 +18,24 @@ def build_leaderboard(metrics: dict[str, dict[str, dict[str, float | None]]]) ->
 
     per_metric_ranks: dict[str, dict[str, int]] = {}
     score_totals: dict[str, float] = {model_name: 0.0 for model_name in metrics}
+    score_counts: dict[str, int] = {model_name: 0 for model_name in metrics}
     for metric_name, higher_is_better in metric_specs.items():
         values = [
             (model_name, float(model_metrics[metric_name]["value"]))
             for model_name, model_metrics in metrics.items()
             if metric_name in model_metrics
+            and model_metrics[metric_name].get("value") is not None
         ]
+        if not values:
+            continue
         ranks = _rank_metric(values, higher_is_better=higher_is_better)
         per_metric_ranks[metric_name] = ranks
         for model_name, rank in ranks.items():
             score_totals[model_name] += rank
+            score_counts[model_name] += 1
 
     mean_ranks = {
-        model_name: round(total / max(len(metric_specs), 1), 4)
+        model_name: round(total / max(score_counts[model_name], 1), 4)
         for model_name, total in score_totals.items()
     }
     overall = sorted(mean_ranks.items(), key=lambda item: item[1])

@@ -3,10 +3,12 @@ from __future__ import annotations
 import itertools
 
 import numpy as np
-from scipy.ndimage import generate_binary_structure, label
+from scipy.ndimage import generate_binary_structure, label, zoom
+
+from sounio_stroke_lab.config import DEFAULT_SEGMENTATION_THRESHOLD
 
 
-BINARY_SEGMENTATION_THRESHOLD = 0.5
+BINARY_SEGMENTATION_THRESHOLD = DEFAULT_SEGMENTATION_THRESHOLD
 LESION_MATCH_IOU_THRESHOLD = 0.2
 
 
@@ -14,9 +16,17 @@ def binary_prediction_mask(probability_map: np.ndarray, threshold: float = BINAR
     return np.asarray(probability_map >= threshold, dtype=bool)
 
 
+def _align_binary_mask(mask: np.ndarray, target_shape: tuple[int, ...]) -> np.ndarray:
+    binary = np.asarray(mask, dtype=bool)
+    if binary.shape == target_shape:
+        return binary
+    factors = tuple(target / current for target, current in zip(target_shape, binary.shape, strict=True))
+    return np.asarray(zoom(binary.astype(np.float32), factors, order=0) >= 0.5, dtype=bool)
+
+
 def dice_score(ground_truth: np.ndarray, prediction: np.ndarray, empty_value: float = 1.0) -> float:
-    truth = np.asarray(ground_truth, dtype=bool)
     pred = np.asarray(prediction, dtype=bool)
+    truth = _align_binary_mask(ground_truth, pred.shape)
     truth_total = int(truth.sum())
     pred_total = int(pred.sum())
     if truth_total == 0 and pred_total == 0:
@@ -28,9 +38,19 @@ def dice_score(ground_truth: np.ndarray, prediction: np.ndarray, empty_value: fl
 
 
 def absolute_volume_difference_ml(ground_truth: np.ndarray, prediction: np.ndarray, voxel_volume_ml: float) -> float:
-    truth = np.asarray(ground_truth, dtype=bool)
     pred = np.asarray(prediction, dtype=bool)
+    truth = _align_binary_mask(ground_truth, pred.shape)
     return float(abs(int(truth.sum()) - int(pred.sum())) * float(voxel_volume_ml))
+
+
+def aligned_segmentation_volumes_ml(
+    ground_truth: np.ndarray,
+    prediction: np.ndarray,
+    voxel_volume_ml: float,
+) -> tuple[float, float]:
+    pred = np.asarray(prediction, dtype=bool)
+    truth = _align_binary_mask(ground_truth, pred.shape)
+    return float(int(truth.sum()) * float(voxel_volume_ml)), float(int(pred.sum()) * float(voxel_volume_ml))
 
 
 def lesionwise_f1_and_count_difference(
@@ -39,8 +59,8 @@ def lesionwise_f1_and_count_difference(
     iou_threshold: float = LESION_MATCH_IOU_THRESHOLD,
     empty_value: float = 1.0,
 ) -> tuple[float, int]:
-    truth = np.asarray(ground_truth, dtype=bool)
     pred = np.asarray(prediction, dtype=bool)
+    truth = _align_binary_mask(ground_truth, pred.shape)
     structure = generate_binary_structure(rank=truth.ndim, connectivity=truth.ndim)
     truth_labels, truth_count = label(truth, structure=structure)
     pred_labels, pred_count = label(pred, structure=structure)

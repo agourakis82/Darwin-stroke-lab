@@ -10,7 +10,8 @@ def summarize_failures(evaluations_by_runner: dict[str, list[object]]) -> dict[s
         ranked = sorted(
             evaluations,
             key=lambda item: (
-                -item.aspects_absolute_error,
+                1 if item.aspects_absolute_error is None else 0,
+                -(item.aspects_absolute_error or 0),
                 item.isles_dice,
                 -abs(item.isles_absolute_volume_difference_ml),
             ),
@@ -18,7 +19,8 @@ def summarize_failures(evaluations_by_runner: dict[str, list[object]]) -> dict[s
         payload["worst_cases_by_model"][model_name] = [
             {
                 "case_id": item.case.case_id,
-                "aspects_score_truth": item.case.aspects_score,
+                "reference_scope": item.case.reference_scope,
+                "aspects_score_truth": item.case.aspects_score if item.case.aspects_reference_available else None,
                 "aspects_score_predicted": item.predicted_aspects,
                 "aspects_absolute_error": item.aspects_absolute_error,
                 "isles_dice": round(item.isles_dice, 4),

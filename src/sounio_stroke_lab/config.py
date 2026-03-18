@@ -11,6 +11,8 @@ FAIRNESS_POLICY = (
     "only representation/model stack changes"
 )
 DEFAULT_TARGET_SHAPE = (32, 64, 64)
+DEFAULT_SEGMENTATION_THRESHOLD = 0.5
+AISD_EXPERIMENTAL_SEGMENTATION_THRESHOLD = 0.25
 ATLAS_REGIONS = (
     "caudate",
     "lentiform",
@@ -23,6 +25,28 @@ ATLAS_REGIONS = (
     "m5",
     "m6",
 )
+
+
+def normalize_target_shape(
+    raw: tuple[int, int, int] | list[int] | None,
+) -> tuple[int, int, int]:
+    if raw is None:
+        return DEFAULT_TARGET_SHAPE
+    if len(raw) != 3:
+        raise ValueError("target_shape must contain exactly 3 integers: z y x.")
+    shape = tuple(int(value) for value in raw)
+    if any(value <= 0 for value in shape):
+        raise ValueError("target_shape entries must be positive integers.")
+    return shape
+
+
+def normalize_segmentation_threshold(raw: float | None) -> float:
+    if raw is None:
+        return DEFAULT_SEGMENTATION_THRESHOLD
+    threshold = float(raw)
+    if threshold <= 0.0 or threshold >= 1.0:
+        raise ValueError("segmentation_threshold must be between 0 and 1.")
+    return threshold
 
 
 def get_storage_root() -> Path:

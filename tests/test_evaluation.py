@@ -32,3 +32,19 @@ def test_empty_segmentation_metrics_return_perfect_when_both_empty():
     assert dice_score(truth, pred) == 1.0
     assert lesion_f1 == 1.0
     assert lesion_count_diff == 0
+
+
+def test_segmentation_metrics_align_ground_truth_shape_before_scoring():
+    truth = np.zeros((2, 8, 8), dtype=np.float32)
+    truth[:, 2:6, 2:6] = 1.0
+    pred = np.zeros((4, 4, 4), dtype=np.float32)
+    pred[:, 1:3, 1:3] = 1.0
+
+    dice = dice_score(truth, pred)
+    lesion_f1, lesion_count_diff = lesionwise_f1_and_count_difference(truth, pred)
+    avd = absolute_volume_difference_ml(truth, pred, voxel_volume_ml=1.0)
+
+    assert dice == 1.0
+    assert lesion_f1 == 1.0
+    assert lesion_count_diff == 0
+    assert avd == 0.0

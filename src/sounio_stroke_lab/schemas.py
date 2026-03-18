@@ -42,7 +42,7 @@ class ModelFamily(str, Enum):
 class MetricInterval(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
 
-    value: float
+    value: float | None
     lower_ci: float | None = None
     upper_ci: float | None = None
 
@@ -50,7 +50,7 @@ class MetricInterval(BaseModel):
 class ComparativeMetric(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
 
-    delta: float
+    delta: float | None
     lower_ci: float | None = None
     upper_ci: float | None = None
     p_value: float | None = None
@@ -133,6 +133,7 @@ class BenchmarkRun(BaseModel):
     language_stack: LanguageStack
     model_family: ModelFamily
     compute_budget: dict[str, Any]
+    evaluation_scope: dict[str, Any] = Field(default_factory=dict)
     metrics: dict[str, Any]
     comparisons: dict[str, BenchmarkComparison] = Field(default_factory=dict)
     stratified_metrics: dict[str, Any] = Field(default_factory=dict)
@@ -176,6 +177,30 @@ class TrainedModelArtifact(BaseModel):
     feature_std: list[float]
     trained_on_split: str
     dataset_manifest_path: str
+    burden_prior_feature_names: list[str] = Field(default_factory=list)
+    burden_prior_weights: list[float] = Field(default_factory=list)
+    burden_prior_bias: float | None = None
+    burden_prior_feature_mean: list[float] = Field(default_factory=list)
+    burden_prior_feature_std: list[float] = Field(default_factory=list)
+    burden_prior_reference_threshold: float | None = None
+    burden_prior_gain_strength: float | None = None
+    burden_prior_gain_strength_policy: str | None = None
+    burden_prior_gain_calibration_split: str | None = None
+    undersegmentation_gate_feature_names: list[str] = Field(default_factory=list)
+    undersegmentation_gate_classifier_weights: list[float] = Field(default_factory=list)
+    undersegmentation_gate_classifier_bias: float | None = None
+    undersegmentation_gate_classifier_feature_mean: list[float] = Field(default_factory=list)
+    undersegmentation_gate_classifier_feature_std: list[float] = Field(default_factory=list)
+    undersegmentation_gate_regressor_weights: list[float] = Field(default_factory=list)
+    undersegmentation_gate_regressor_bias: float | None = None
+    undersegmentation_gate_regressor_feature_mean: list[float] = Field(default_factory=list)
+    undersegmentation_gate_regressor_feature_std: list[float] = Field(default_factory=list)
+    undersegmentation_gate_gain_min: float | None = None
+    undersegmentation_gate_gain_max: float | None = None
+    undersegmentation_gate_activation_threshold: float | None = None
+    undersegmentation_gate_policy: str | None = None
+    undersegmentation_gate_calibration_split: str | None = None
+    undersegmentation_gate_positive_case_count: int | None = None
     removed_component: str | None = None
     notes: list[str] = Field(default_factory=list)
 
@@ -207,6 +232,8 @@ class BenchmarkRequest(BaseModel):
     train_split: str = "train"
     test_split: str = "test"
     seed: int = 13
+    target_shape: tuple[int, int, int] | None = None
+    segmentation_threshold: float | None = None
 
 
 class WorkflowKind(str, Enum):

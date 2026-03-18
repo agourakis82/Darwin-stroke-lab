@@ -30,12 +30,17 @@ def test_api_study_analysis_and_benchmark_flow(tmp_path: Path):
 
     benchmark_response = client.post(
         "/benchmark/runs",
-        json={"dataset_manifest_path": str(manifest_path), "seed": 7},
+        json={"dataset_manifest_path": str(manifest_path), "seed": 7, "segmentation_threshold": 0.35},
     )
     assert benchmark_response.status_code == 201
     benchmark = benchmark_response.json()
     assert benchmark["language_stack"] == "multi"
     assert len(benchmark["artifacts"]) >= 8
+    assert benchmark["compute_budget"]["segmentation_threshold"] == 0.35
+    assert benchmark["compute_budget"]["segmentation_threshold_policy"] == "explicit"
+    assert benchmark["compute_budget"]["burden_prior_gain_strength_policy"] == "fixed-v1"
+    assert benchmark["compute_budget"]["sounio_undersegmentation_gate_policy"] == "no-disjoint-val-v1"
+    assert benchmark["compute_budget"]["sounio_undersegmentation_gate_active"] is False
 
     fetch_benchmark = client.get(f"/benchmark/runs/{benchmark['run_id']}")
     assert fetch_benchmark.status_code == 200

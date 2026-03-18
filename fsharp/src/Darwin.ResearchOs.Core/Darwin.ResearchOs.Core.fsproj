@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Core.fs" />
+    <Compile Include="SnioInterop.fs" />
+    <Compile Include="SounioRuntime.fs" />
+    <Compile Include="JobOrchestration.fs" />
+    <Compile Include="ParityBenchmark.fs" />
+    <Compile Include="ResearchOps.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Darwin.ResearchOs.Contracts\Darwin.ResearchOs.Contracts.fsproj" />
+    <ProjectReference Include="..\Darwin.StrokeLab\Darwin.StrokeLab.fsproj" />
+  </ItemGroup>
+
+</Project>

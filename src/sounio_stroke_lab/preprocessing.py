@@ -48,6 +48,10 @@ def _supports_nibabel() -> bool:
     return importlib.util.find_spec("nibabel") is not None
 
 
+def _supports_pillow() -> bool:
+    return importlib.util.find_spec("PIL") is not None
+
+
 def _load_npy(path: Path) -> np.ndarray:
     array = np.load(path)
     if isinstance(array, np.lib.npyio.NpzFile):
@@ -90,15 +94,47 @@ def _load_dicom(paths: list[Path]) -> np.ndarray:
     return np.clip(volume, 0.0, 1.0)
 
 
-def load_volume_from_paths(paths: list[Path]) -> LoadedVolume:
+def _load_image_stack(paths: list[Path], *, normalize_intensity: bool = True) -> np.ndarray:
+    if not _supports_pillow():
+        raise RuntimeError("Pillow is required to decode PNG/JPEG slice stacks.")
+    from PIL import Image  # type: ignore
+
+    slices: list[np.ndarray] = []
+    for path in sorted(paths):
+        with Image.open(path) as image:
+            pixels = np.asarray(image, dtype=np.float32)
+        if pixels.ndim == 3:
+            pixels = pixels.mean(axis=2)
+        slices.append(pixels)
+    volume = np.stack(slices, axis=0)
+    if normalize_intensity and volume.max(initial=0.0) > 1.5:
+        volume = volume / 255.0
+    return np.clip(volume, 0.0, 1.0).astype(np.float32)
+
+
+def load_volume_from_paths(paths: list[Path], *, treat_as_mask: bool = False) -> LoadedVolume:
     suffixes = {path.suffix.lower() for path in paths}
     warnings: list[str] = []
     if ".npy" in suffixes:
         warnings.append("Research-only .npy input bypasses clinical image decoding.")
-        return LoadedVolume(volume=_load_npy(paths[0]), input_mode=InputMode.research, warnings=warnings)
+        volume = _load_npy(paths[0])
+        if treat_as_mask:
+            volume = (volume > 0.0).astype(np.float32)
+        return LoadedVolume(volume=volume, input_mode=InputMode.research, warnings=warnings)
     if any(path.name.endswith(".nii") or path.name.endswith(".nii.gz") for path in paths):
         warnings.append("Research-only NIfTI input bypasses direct DICOM decoding.")
-        return LoadedVolume(volume=_load_nifti(paths[0]), input_mode=InputMode.research, warnings=warnings)
+        volume = _load_nifti(paths[0])
+        if treat_as_mask:
+            volume = (volume > 0.0).astype(np.float32)
+        return LoadedVolume(volume=volume, input_mode=InputMode.research, warnings=warnings)
+    if suffixes and suffixes.issubset({".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff"}):
+        if treat_as_mask:
+            warnings.append("Research-only mask stack input uses exported labels and omits original DICOM metadata.")
+            volume = (_load_image_stack(paths, normalize_intensity=False) > 0.0).astype(np.float32)
+        else:
+            warnings.append("Research-only image stack input uses exported slices and omits original DICOM metadata.")
+            volume = _load_image_stack(paths)
+        return LoadedVolume(volume=volume, input_mode=InputMode.research, warnings=warnings)
     if suffixes.issubset({".dcm"}) and _supports_pydicom():
         return LoadedVolume(volume=_load_dicom(paths), input_mode=InputMode.dicom, warnings=warnings)
     if suffixes.issubset({".dcm"}) and not _supports_pydicom():
@@ -145,9 +181,13 @@ def estimate_hemisphere(volume: np.ndarray) -> str:
     return "right" if right_deficit >= left_deficit else "left"
 
 
-def prepare_volume(volume: np.ndarray, warnings: list[str] | None = None) -> PreprocessedVolume:
+def prepare_volume(
+    volume: np.ndarray,
+    warnings: list[str] | None = None,
+    shape: tuple[int, int, int] = DEFAULT_TARGET_SHAPE,
+) -> PreprocessedVolume:
     warnings = list(warnings or [])
-    resampled = resample_volume(clip_and_normalize(volume))
+    resampled = resample_volume(clip_and_normalize(volume), shape=shape)
     mirrored = np.flip(resampled, axis=2)
     asymmetry = np.clip(mirrored - resampled, 0.0, None)
     gradient = np.sqrt(

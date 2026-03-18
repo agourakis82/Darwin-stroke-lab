@@ -7,6 +7,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+from sounio_stroke_lab.evaluation import _align_binary_mask
 from sounio_stroke_lab.schemas import BenchmarkRun
 
 
@@ -19,10 +20,11 @@ def create_case_figure(
 ) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     center = volume.shape[0] // 2
+    aligned_mask = _align_binary_mask(lesion_mask, volume.shape)
     fig, axes = plt.subplots(1, 3, figsize=(11, 3.6))
     panels = [
         (volume[center], "Input volume", "gray"),
-        (lesion_mask[center], "Ground truth lesion", "inferno"),
+        (aligned_mask[center], "Ground truth lesion", "inferno"),
         (heatmap[center], "Predicted heatmap", "magma"),
     ]
     for axis, (image, label, cmap) in zip(axes, panels, strict=True):
@@ -41,9 +43,9 @@ def create_metric_summary_figure(
 ) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     model_names = list(metrics)
-    aspects = [float(metrics[name]["aspects_mae"]["value"]) for name in model_names]
-    auc = [float(metrics[name]["auc"]["value"]) for name in model_names]
-    dice = [float(metrics[name]["isles_dice"]["value"]) for name in model_names]
+    aspects = [metrics[name]["aspects_mae"]["value"] for name in model_names]
+    auc = [metrics[name]["auc"]["value"] for name in model_names]
+    dice = [metrics[name]["isles_dice"]["value"] for name in model_names]
 
     fig, axes = plt.subplots(1, 3, figsize=(13, 3.8))
     panels = [
@@ -52,14 +54,26 @@ def create_metric_summary_figure(
         ("Dice", dice, True),
     ]
     for axis, (title, values, higher_is_better) in zip(axes, panels, strict=True):
-        bars = axis.bar(model_names, values, color=["#0d6e6e", "#7a8b99", "#b08968", "#6c757d"][: len(model_names)])
+        numeric_values = [float(value) if isinstance(value, (int, float)) else None for value in values]
+        if not any(value is not None for value in numeric_values):
+            axis.text(0.5, 0.5, "unsupported", ha="center", va="center", transform=axis.transAxes)
+            axis.set_title(title)
+            axis.axis("off")
+            continue
+        plot_values = [value if value is not None else 0.0 for value in numeric_values]
+        bars = axis.bar(model_names, plot_values, color=["#0d6e6e", "#7a8b99", "#b08968", "#6c757d"][: len(model_names)])
         axis.set_title(title)
         axis.tick_params(axis="x", rotation=20)
         if title == "ASPECTS MAE":
-            axis.set_ylim(0.0, max(values) * 1.15 + 0.01)
+            axis.set_ylim(0.0, max(plot_values) * 1.15 + 0.01)
         else:
             axis.set_ylim(0.0, 1.0)
-        best_index = int(np.argmin(values) if not higher_is_better else np.argmax(values))
+        comparable = [(index, value) for index, value in enumerate(numeric_values) if value is not None]
+        best_index = int(
+            min(comparable, key=lambda item: item[1])[0]
+            if not higher_is_better
+            else max(comparable, key=lambda item: item[1])[0]
+        )
         bars[best_index].set_edgecolor("black")
         bars[best_index].set_linewidth(1.5)
     fig.tight_layout()
@@ -117,7 +131,7 @@ def create_effect_size_figure(
     upper = []
     for baseline_name, comparison in comparisons.items():
         auc_gain = comparison.metrics.get("auc_gain")
-        if auc_gain is None:
+        if auc_gain is None or not isinstance(auc_gain.delta, (int, float)):
             continue
         labels.append(baseline_name)
         deltas.append(float(auc_gain.delta))
@@ -172,13 +186,24 @@ def render_report(run: BenchmarkRun) -> str:
         aspects = comparison.metrics.get("aspects_mae_gain")
         auc_gain = comparison.metrics.get("auc_gain")
         coherence_gain = comparison.metrics.get("coherence_gain")
+        def format_delta(metric: object, places: int = 3) -> str:
+            value = getattr(metric, "delta", None)
+            if not isinstance(value, (int, float)):
+                return "n/a"
+            return f"{value:.{places}f}"
+
+        def format_p(metric: object) -> str:
+            value = getattr(metric, "p_value", None)
+            if not isinstance(value, (int, float)):
+                return "n/a"
+            return f"{value:.4f}"
         comparison_rows.append(
             "| "
             f"{comparison_name} | "
-            f"{getattr(aspects, 'delta', 0.0):.3f} | "
-            f"{getattr(auc_gain, 'delta', 0.0):.3f} | "
-            f"{getattr(coherence_gain, 'delta', 0.0):.3f} | "
-            f"{getattr(auc_gain, 'p_value', 1.0):.4f} |"
+            f"{format_delta(aspects)} | "
+            f"{format_delta(auc_gain)} | "
+            f"{format_delta(coherence_gain)} | "
+            f"{format_p(auc_gain)} |"
         )
     comparison_table = "\n".join(comparison_rows) if comparison_rows else "| none | 0.000 | 0.000 | 0.000 | 1.0000 |"
     ablations = "\n".join(
@@ -191,6 +216,15 @@ def render_report(run: BenchmarkRun) -> str:
     artifact_lines = "\n".join(f"- `{artifact.kind}`: {artifact.path}" for artifact in run.artifacts)
     cohort_shift_artifact = next((artifact.path for artifact in run.artifacts if artifact.name == "cohort_shift"), "n/a")
     failure_artifact = next((artifact.path for artifact in run.artifacts if artifact.name == "failure_analysis"), "n/a")
+    evaluation_scope = run.evaluation_scope.get("test", {}) if isinstance(run.evaluation_scope, dict) else {}
+    scope_note = ""
+    if isinstance(evaluation_scope, dict) and evaluation_scope.get("aspects_reference_cases", 0) < evaluation_scope.get("case_count", 0):
+        scope_note = (
+            "\n## Evaluation scope\n\n"
+            "- This cohort is treated as segmentation-first.\n"
+            "- Segmentation and lesion-presence metrics are benchmark-grade for this export.\n"
+            "- ASPECTS, hemisphere and atlas-region truth are unsupported for some or all test cases and are reported as `n/a`.\n"
+        )
     leaderboard_rows = "\n".join(
         f"| {item['rank']} | {item['model_name']} | {item['mean_rank']:.3f} |"
         for item in run.leaderboard.get("overall_rank", [])
@@ -206,6 +240,7 @@ This benchmark evaluates whether the Sounio hypercomplex framework offers better
 ## Fairness controls
 
 {fairness}
+{scope_note}
 
 ## Quantitative summary
 

@@ -134,3 +134,60 @@ def create_external_benchmark_manifest(tmp_path: Path) -> Path:
     manifest_path = tmp_path / "external_benchmark_manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return manifest_path
+
+
+def create_segmentation_only_manifest(tmp_path: Path) -> Path:
+    manifest_path = create_benchmark_manifest(tmp_path)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    for item in manifest["cases"]:
+        item["hemisphere"] = None
+        item["aspects_score"] = None
+        item["metadata"] = {
+            "reference_scope": "segmentation_only",
+            "segmentation_reference_available": True,
+            "hemisphere_reference_available": False,
+            "region_reference_available": False,
+            "aspects_reference_available": False,
+        }
+    manifest["dataset_version"] = "fixture-segmentation-only-v1"
+    manifest["split_policy"] = "fixed train/test segmentation-only fixture"
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    return manifest_path
+
+
+def create_positive_only_segmentation_manifest(tmp_path: Path) -> Path:
+    manifest_path = create_benchmark_manifest(tmp_path)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    positive_cases = []
+    for item in manifest["cases"]:
+        if item["split"] == "test" and item["aspects_score"] == 10:
+            continue
+        if item["split"] == "train" and item["aspects_score"] == 10:
+            continue
+        item["hemisphere"] = None
+        item["aspects_score"] = None
+        item["metadata"] = {
+            "reference_scope": "segmentation_only",
+            "segmentation_reference_available": True,
+            "hemisphere_reference_available": False,
+            "region_reference_available": False,
+            "aspects_reference_available": False,
+        }
+        positive_cases.append(item)
+    manifest["cases"] = positive_cases
+    manifest["dataset_version"] = "fixture-positive-only-segmentation-v1"
+    manifest["split_policy"] = "fixed train/test positive-only segmentation fixture"
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    return manifest_path
+
+
+def create_benchmark_manifest_with_val(tmp_path: Path) -> Path:
+    manifest_path = create_benchmark_manifest(tmp_path)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    for item in manifest["cases"]:
+        if item["case_id"] in {"case-007", "case-008"}:
+            item["split"] = "val"
+    manifest["dataset_version"] = "fixture-v1-with-val"
+    manifest["split_policy"] = "fixed train/val/test fixture"
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    return manifest_path

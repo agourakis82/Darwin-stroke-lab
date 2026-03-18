@@ -30,12 +30,16 @@ def summarize_manifest_cohort(
     split: str,
 ) -> dict[str, object]:
     case_count = len(cases)
-    lesion_positive_cases = [case for case in cases if bool(case.affected_regions)]
-    hemisphere_counts = Counter(case.hemisphere for case in cases)
+    lesion_positive_cases = [case for case in cases if case.lesion_positive]
+    hemisphere_reference_cases = [case for case in cases if case.hemisphere_reference_available]
+    aspects_reference_cases = [case for case in cases if case.aspects_reference_available]
+    region_reference_cases = [case for case in cases if case.region_reference_available]
+    hemisphere_counts = Counter(case.hemisphere for case in hemisphere_reference_cases)
     aspects_bucket_counts = Counter(
         "severe_0_4" if case.aspects_score <= 4 else "moderate_5_7" if case.aspects_score <= 7 else "mild_8_10"
-        for case in cases
+        for case in aspects_reference_cases
     )
+    reference_scope_counts = Counter(case.reference_scope for case in cases)
     metadata_keys = Counter(key for case in cases for key in case.metadata)
     manufacturer_counts = Counter(
         str(case.metadata.get("manufacturer"))
@@ -72,11 +76,16 @@ def summarize_manifest_cohort(
         "manifest_path": str(manifest_path),
         "split": split,
         "case_count": case_count,
+        "reference_scope_counts": dict(reference_scope_counts),
+        "segmentation_reference_cases": sum(int(case.segmentation_reference_available) for case in cases),
+        "hemisphere_reference_cases": len(hemisphere_reference_cases),
+        "region_reference_cases": len(region_reference_cases),
+        "aspects_reference_cases": len(aspects_reference_cases),
         "lesion_positive_cases": len(lesion_positive_cases),
         "lesion_positive_fraction": _safe_percentage(len(lesion_positive_cases), case_count),
         "hemisphere_counts": dict(hemisphere_counts),
         "aspects_bucket_counts": dict(aspects_bucket_counts),
-        "aspects_score_summary": _numeric_summary([float(case.aspects_score) for case in cases]),
+        "aspects_score_summary": _numeric_summary([float(case.aspects_score) for case in aspects_reference_cases]),
         "voxel_volume_ml_summary": _numeric_summary([float(case.voxel_volume_ml) for case in cases]),
         "modality_availability": modality_availability,
         "metadata_coverage": {
