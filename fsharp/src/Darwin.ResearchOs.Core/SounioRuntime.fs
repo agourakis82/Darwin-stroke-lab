@@ -152,6 +152,7 @@ module SounioRuntimeProbe =
         match firstEnv [ "SOUNIO_ROOT" ] with
         | Some root -> addRoot root
         | None -> ()
+        addRoot (Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "sounio-lang-sounio-origin-main"))
         addRoot (Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "sounio-lang-sounio"))
         addRoot (Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "sounio"))
         roots
