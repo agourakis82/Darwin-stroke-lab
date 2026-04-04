@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 from pathlib import Path
 
 import numpy as np
@@ -151,3 +152,101 @@ def test_load_manifest_cases_binarizes_png_stack_masks(tmp_path: Path):
     assert test_cases[0].case_id == "0000025"
     assert int((test_cases[0].lesion_mask > 0.25).sum()) == 9
     assert test_cases[0].aspects_score < 10
+
+
+def test_validate_manifest_reports_cloud_placeholders(tmp_path: Path, monkeypatch):
+    volume_path = tmp_path / "case_volume.npy"
+    mask_path = tmp_path / "case_mask.npy"
+    np.save(volume_path, np.zeros((8, 8, 8), dtype=np.float32))
+    np.save(mask_path, np.zeros((8, 8, 8), dtype=np.float32))
+
+    manifest_path = build_index_manifest(
+        index_path=_write_index_csv(
+            tmp_path,
+            [
+                {
+                    "case_id": "case-001",
+                    "split": "train",
+                    "volume_path": str(volume_path),
+                    "lesion_mask_path": str(mask_path),
+                    "hemisphere": "left",
+                },
+                {
+                    "case_id": "case-002",
+                    "split": "test",
+                    "volume_path": str(volume_path),
+                    "lesion_mask_path": str(mask_path),
+                    "hemisphere": "right",
+                },
+            ],
+        ),
+        output_path=tmp_path / "index_manifest.json",
+    )
+
+    real_stat = os.stat
+
+    class _PlaceholderStat:
+        st_size = 4096
+        st_blocks = 0
+
+    def fake_stat(path, *args, **kwargs):
+        if Path(path) == volume_path:
+            return _PlaceholderStat()
+        return real_stat(path, *args, **kwargs)
+
+    monkeypatch.setattr("sounio_stroke_lab.dataset_manifest.os.stat", fake_stat)
+
+    _, issues = validate_benchmark_manifest(manifest_path)
+
+    assert any("cloud placeholder" in issue for issue in issues)
+
+
+def test_load_manifest_cases_rejects_cloud_placeholders(tmp_path: Path, monkeypatch):
+    volume_path = tmp_path / "case_volume.npy"
+    mask_path = tmp_path / "case_mask.npy"
+    np.save(volume_path, np.zeros((8, 8, 8), dtype=np.float32))
+    np.save(mask_path, np.zeros((8, 8, 8), dtype=np.float32))
+
+    manifest_path = build_index_manifest(
+        index_path=_write_index_csv(
+            tmp_path,
+            [
+                {
+                    "case_id": "case-001",
+                    "split": "test",
+                    "volume_path": str(volume_path),
+                    "lesion_mask_path": str(mask_path),
+                    "hemisphere": "left",
+                }
+            ],
+        ),
+        output_path=tmp_path / "index_manifest.json",
+    )
+
+    real_stat = os.stat
+
+    class _PlaceholderStat:
+        st_size = 4096
+        st_blocks = 0
+
+    def fake_stat(path, *args, **kwargs):
+        if Path(path) == mask_path:
+            return _PlaceholderStat()
+        return real_stat(path, *args, **kwargs)
+
+    monkeypatch.setattr("sounio_stroke_lab.dataset_manifest.os.stat", fake_stat)
+
+    try:
+        load_manifest_cases(manifest_path, split="test")
+        assert False, "Expected load_manifest_cases to reject cloud placeholders."
+    except ValueError as exc:
+        assert "cloud placeholder" in str(exc)
+
+
+def _write_index_csv(tmp_path: Path, rows: list[dict[str, str]]) -> Path:
+    index_path = tmp_path / "index.csv"
+    with index_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=["case_id", "split", "volume_path", "lesion_mask_path", "hemisphere"])
+        writer.writeheader()
+        writer.writerows(rows)
+    return index_path

@@ -157,6 +157,28 @@ module SounioRuntimeProbe =
         addRoot (Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "sounio"))
         roots
 
+    let private findInAncestors (startPath: string) (relativePath: string) =
+        let startDirectory =
+            if Directory.Exists(startPath) then
+                DirectoryInfo(Path.GetFullPath(startPath))
+            else
+                let file = FileInfo(Path.GetFullPath(startPath))
+                file.Directory
+
+        let rec ascend (current: DirectoryInfo) =
+            if isNull current then
+                None
+            else
+                let candidate = Path.Combine(current.FullName, relativePath)
+                if File.Exists(candidate) then
+                    Some(Path.GetFullPath(candidate))
+                elif isNull current.Parent then
+                    None
+                else
+                    ascend current.Parent
+
+        if isNull startDirectory then None else ascend startDirectory
+
     let private findGitRoot (path: string) =
         let start = FileInfo(path).Directory
         let rec ascend (current: DirectoryInfo) =
@@ -800,6 +822,25 @@ module SounioRuntimeProbe =
         | _ -> resolveProbeProgram ()
 
     let private detectCandidate () =
+        let vmWrapperCandidate =
+            if OperatingSystem.IsMacOS() then
+                seq {
+                    yield findInAncestors AppContext.BaseDirectory (Path.Combine("scripts", "sounio-lima-souc"))
+                    yield findInAncestors (Directory.GetCurrentDirectory()) (Path.Combine("scripts", "sounio-lima-souc"))
+                    let candidate = Path.Combine(repoRoot (), "scripts", "sounio-lima-souc")
+                    yield if File.Exists(candidate) then Some(Path.GetFullPath(candidate)) else None
+                }
+                |> Seq.choose id
+                |> Seq.tryHead
+            else
+                None
+
+        let canStartSouc (candidate: string) =
+            let env = Dictionary<string, string>()
+            match runProcess (Directory.GetCurrentDirectory()) candidate [ "--version" ] env with
+            | Ok(0, _, _) -> true
+            | _ -> false
+
         let envPath = firstEnv [ "SOUNIO_SOUC_PATH" ] |> Option.map Path.GetFullPath
         let pathCandidate =
             match Environment.GetEnvironmentVariable("PATH") with
@@ -818,13 +859,18 @@ module SounioRuntimeProbe =
             match envPath with
             | Some candidate -> yield ("env", candidate)
             | None -> ()
+            match vmWrapperCandidate with
+            | Some candidate -> yield ("vm-wrapper", candidate)
+            | None -> ()
             match pathCandidate with
             | Some candidate -> yield ("path", Path.GetFullPath(candidate))
             | None -> ()
             for candidate in rootedCandidates do
                 yield ("default-root", Path.GetFullPath(candidate))
         }
-        |> Seq.tryFind (fun (_, candidate) -> File.Exists(candidate))
+        |> Seq.tryFind (fun (source, candidate) ->
+            File.Exists(candidate)
+            && (String.Equals(source, "vm-wrapper", StringComparison.Ordinal) || canStartSouc candidate))
 
     let private resolveStdlib (soucPath: string) =
         match firstEnv [ "SOUNIO_STDLIB_PATH" ] with
@@ -906,6 +952,161 @@ module SounioRuntimeProbe =
           StatsValue = None
           Diagnostics = ResizeArray() }
 
+    let private bashQuote (value: string) =
+        "'" + value.Replace("'", "'\"'\"'") + "'"
+
+    let private probeSnioServerBatch
+        (soucPath: string)
+        (stdlibPath: string)
+        (serveEntryPath: string)
+        : SnioServerProbeResult =
+        let diagnostics = ResizeArray<string>()
+
+        try
+            let inputPath = Path.GetTempFileName()
+            let outputPath = Path.GetTempFileName()
+
+            try
+                use inputStream = File.Open(inputPath, FileMode.Create, FileAccess.Write, FileShare.None)
+                SnioProtocol.writeInfo inputStream
+                SnioProtocol.writeCapabilities inputStream
+                SnioProtocol.writeHealth inputStream
+                SnioProtocol.writeStats inputStream
+                SnioProtocol.writeShutdown inputStream
+
+                let command =
+                    String.concat " " [
+                        "set -euo pipefail;"
+                        "SOUNIO_STDLIB_PATH=" + bashQuote stdlibPath
+                        bashQuote soucPath
+                        "run"
+                        bashQuote serveEntryPath
+                        "<"
+                        bashQuote inputPath
+                        ">"
+                        bashQuote outputPath
+                    ]
+
+                let psi = ProcessStartInfo()
+                psi.FileName <- "/bin/bash"
+                psi.UseShellExecute <- false
+                psi.RedirectStandardOutput <- true
+                psi.RedirectStandardError <- true
+                psi.CreateNoWindow <- true
+                psi.ArgumentList.Add("-lc")
+                psi.ArgumentList.Add(command)
+
+                use proc = Process.Start(psi)
+                let stderr = proc.StandardError.ReadToEnd()
+                let stdout = proc.StandardOutput.ReadToEnd()
+                proc.WaitForExit()
+
+                if proc.ExitCode <> 0 then
+                    let result = emptySnioServerProbeResult (Some false) (Some serveEntryPath)
+                    result.Diagnostics.Add($"SNIO batch probe failed: souc exited with code {proc.ExitCode}.")
+                    if not (String.IsNullOrWhiteSpace(stderr)) then
+                        result.Diagnostics.Add($"SNIO batch probe stderr: {stderr.Trim()}")
+                    if not (String.IsNullOrWhiteSpace(stdout)) then
+                        result.Diagnostics.Add($"SNIO batch probe stdout: {stdout.Trim()}")
+                    { result with Attempted = true }
+                else
+                    use stream = new MemoryStream(File.ReadAllBytes(outputPath))
+
+                    let nextResponse () =
+                        try
+                            Some(SnioProtocol.readResponse stream)
+                        with error ->
+                            diagnostics.Add($"SNIO batch probe response parse failed: {error.Message}")
+                            None
+
+                    match nextResponse () with
+                    | Some(SnioProtocol.Response.ResultValues [| 0L |])
+                    | Some(SnioProtocol.Response.ResultValues [||]) -> ()
+                    | Some response ->
+                        diagnostics.Add($"SNIO batch probe expected ready signal, got {response}.")
+                    | None -> ()
+
+                    let infoValues =
+                        match nextResponse () with
+                        | Some(SnioProtocol.Response.ResultValues values) -> ResizeArray(values)
+                        | Some(SnioProtocol.Response.ErrorMessage message) ->
+                            diagnostics.Add($"SNIO Info failed: {message}")
+                            ResizeArray()
+                        | Some response ->
+                            diagnostics.Add($"SNIO Info returned unexpected response: {response}.")
+                            ResizeArray()
+                        | None -> ResizeArray()
+
+                    let capabilities =
+                        match nextResponse () with
+                        | Some(SnioProtocol.Response.ResultValues [| value |]) -> Some value
+                        | Some(SnioProtocol.Response.ErrorMessage message) ->
+                            diagnostics.Add($"SNIO Capabilities failed: {message}")
+                            None
+                        | Some response ->
+                            diagnostics.Add($"SNIO Capabilities returned unexpected response: {response}.")
+                            None
+                        | None -> None
+
+                    let healthOk =
+                        match nextResponse () with
+                        | Some(SnioProtocol.Response.ResultValues [| value |]) -> Some(value <> 0L)
+                        | Some(SnioProtocol.Response.ErrorMessage message) ->
+                            diagnostics.Add($"SNIO Health failed: {message}")
+                            None
+                        | Some response ->
+                            diagnostics.Add($"SNIO Health returned unexpected response: {response}.")
+                            None
+                        | None -> None
+
+                    let statsValue =
+                        match nextResponse () with
+                        | Some(SnioProtocol.Response.ResultValues [| value |]) -> Some value
+                        | Some(SnioProtocol.Response.ErrorMessage message) ->
+                            diagnostics.Add($"SNIO Stats failed: {message}")
+                            None
+                        | Some response ->
+                            diagnostics.Add($"SNIO Stats returned unexpected response: {response}.")
+                            None
+                        | None -> None
+
+                    match nextResponse () with
+                    | Some SnioProtocol.Response.Shutdown -> ()
+                    | Some response ->
+                        diagnostics.Add($"SNIO batch probe expected shutdown response, got {response}.")
+                    | None -> ()
+
+                    if not (String.IsNullOrWhiteSpace(stderr)) then
+                        diagnostics.Add($"SNIO batch probe stderr: {stderr.Trim()}")
+                    if not (String.IsNullOrWhiteSpace(stdout)) then
+                        diagnostics.Add($"SNIO batch probe stdout: {stdout.Trim()}")
+
+                    let succeeded =
+                        infoValues.Count > 0
+                        && capabilities.IsSome
+                        && healthOk = Some true
+
+                    if succeeded then
+                        let infoSummary = infoValues |> Seq.map string |> String.concat ", "
+                        diagnostics.Add($"SNIO batch probe succeeded via serve_entry.sio with info=[{infoSummary}].")
+
+                    { Attempted = true
+                      Succeeded = succeeded
+                      BuiltInServeSupported = Some false
+                      ServeEntryPath = Some serveEntryPath
+                      InfoValues = infoValues
+                      Capabilities = capabilities
+                      HealthOk = healthOk
+                      StatsValue = statsValue
+                      Diagnostics = diagnostics }
+            finally
+                try File.Delete(inputPath) with _ -> ()
+                try File.Delete(outputPath) with _ -> ()
+        with error ->
+            let result = emptySnioServerProbeResult (Some false) (Some serveEntryPath)
+            result.Diagnostics.Add($"SNIO batch probe failed: {error.Message}")
+            { result with Attempted = true }
+
     let private probeSnioServer
         (soucPath: string)
         (stdlibPath: string)
@@ -921,6 +1122,8 @@ module SounioRuntimeProbe =
             if snioInventory.ProtocolPath.IsSome || snioInventory.EmbedHeaderPath.IsSome then
                 result.Diagnostics.Add("SNIO server probe skipped because the selected souc binary does not expose --serve and no upstream serve_entry.sio path was available.")
             result
+        elif not builtInServeSupported && serveEntryPath.IsSome then
+            probeSnioServerBatch soucPath stdlibPath serveEntryPath.Value
         else
             try
                 let snio =

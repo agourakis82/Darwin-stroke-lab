@@ -4,6 +4,7 @@ import csv
 import hashlib
 import json
 import importlib.util
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -152,6 +153,35 @@ def _resolve_path(manifest_path: Path, raw_path: str) -> Path:
     return (manifest_path.parent / path).resolve()
 
 
+def _is_local_placeholder(path: Path) -> bool:
+    try:
+        stat_result = os.stat(path)
+    except OSError:
+        return False
+    return stat_result.st_size > 0 and stat_result.st_blocks == 0
+
+
+def _placeholder_issue(path: Path) -> str | None:
+    if path.is_file() and _is_local_placeholder(path):
+        return (
+            f"Path is a cloud placeholder and not fully materialized locally: {path}. "
+            "Move or download the dataset into a non-iCloud location before benchmarking."
+        )
+    if path.is_dir():
+        try:
+            files = sorted(candidate for candidate in path.iterdir() if candidate.is_file())
+        except OSError:
+            return None
+        placeholder = next((candidate for candidate in files if _is_local_placeholder(candidate)), None)
+        if placeholder is not None:
+            return (
+                f"Directory contains cloud placeholder files and is not fully materialized locally: {path} "
+                f"(example: {placeholder.name}). Move or download the dataset into a non-iCloud location "
+                "before benchmarking."
+            )
+    return None
+
+
 def _infer_hemisphere(mask: np.ndarray) -> str:
     if float(mask.sum()) <= 0.0:
         return "right"
@@ -280,8 +310,16 @@ def validate_benchmark_manifest(
         lesion_mask_path = _resolve_path(manifest_path, item.lesion_mask_path)
         if not volume_path.exists():
             issues.append(f"Missing volume path for {item.case_id}: {volume_path}")
+        else:
+            placeholder_issue = _placeholder_issue(volume_path)
+            if placeholder_issue is not None:
+                issues.append(f"{item.case_id}: {placeholder_issue}")
         if not lesion_mask_path.exists():
             issues.append(f"Missing lesion mask path for {item.case_id}: {lesion_mask_path}")
+        else:
+            placeholder_issue = _placeholder_issue(lesion_mask_path)
+            if placeholder_issue is not None:
+                issues.append(f"{item.case_id}: {placeholder_issue}")
         if volume_path == lesion_mask_path:
             issues.append(f"Volume and lesion mask resolve to the same path for {item.case_id}: {volume_path}")
         if not item.split:
@@ -301,6 +339,12 @@ def load_manifest_cases(manifest_path: Path, split: str = "test") -> tuple[Bench
             continue
         volume_path = _resolve_path(manifest_path, item.volume_path)
         mask_path = _resolve_path(manifest_path, item.lesion_mask_path)
+        volume_placeholder_issue = _placeholder_issue(volume_path)
+        if volume_placeholder_issue is not None:
+            raise ValueError(f"{item.case_id}: {volume_placeholder_issue}")
+        mask_placeholder_issue = _placeholder_issue(mask_path)
+        if mask_placeholder_issue is not None:
+            raise ValueError(f"{item.case_id}: {mask_placeholder_issue}")
         volume, _ = _load_volume(volume_path)
         lesion_mask, voxel_volume_ml = _load_volume(mask_path, treat_as_mask=True)
         hemisphere = item.hemisphere or _infer_hemisphere(lesion_mask)

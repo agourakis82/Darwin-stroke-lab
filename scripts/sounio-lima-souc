@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+instance="${SOUNIO_LIMA_INSTANCE:-darwin-macbook}"
+source_root="${SOUNIO_LINUX_SOURCE_ROOT:-${SOUNIO_ROOT:-$HOME/sounio-lang-sounio-origin-main}}"
+linux_souc="${SOUNIO_LINUX_SOUC_PATH:-$source_root/artifacts/omega/souc-bin/souc-linux-x86_64-jit}"
+stdlib_path="${SOUNIO_STDLIB_PATH:-$source_root/stdlib}"
+workdir="${SOUNIO_LIMA_WORKDIR:-$PWD}"
+
+if ! command -v limactl >/dev/null 2>&1; then
+  echo "sounio-lima-souc: limactl is required on the host." >&2
+  exit 127
+fi
+
+if [[ ! -f "$linux_souc" ]]; then
+  echo "sounio-lima-souc: Linux souc binary not found at $linux_souc" >&2
+  exit 127
+fi
+
+remote_args=(
+  env
+  "SOUNIO_STDLIB_PATH=$stdlib_path"
+  /usr/bin/qemu-x86_64
+  -L
+  /usr/x86_64-linux-gnu
+  "$linux_souc"
+)
+
+exec limactl shell --yes --workdir "$workdir" "$instance" "${remote_args[@]}" "$@"
