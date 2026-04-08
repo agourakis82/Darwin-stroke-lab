@@ -2,18 +2,81 @@
 set -euo pipefail
 
 instance="${SOUNIO_LIMA_INSTANCE:-darwin-macbook}"
-source_root="${SOUNIO_LINUX_SOURCE_ROOT:-${SOUNIO_ROOT:-$HOME/sounio-lang-sounio-origin-main}}"
-linux_souc="${SOUNIO_LINUX_SOUC_PATH:-$source_root/artifacts/omega/souc-bin/souc-linux-x86_64-jit}"
-stdlib_path="${SOUNIO_STDLIB_PATH:-$source_root/stdlib}"
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd "$script_dir/.." && pwd)"
 workdir="${SOUNIO_LIMA_WORKDIR:-$PWD}"
+
+pick_source_root() {
+  local candidates=()
+
+  for candidate in \
+    "${SOUNIO_LINUX_SOURCE_ROOT:-}" \
+    "${SOUNIO_SOURCE_ROOT:-}" \
+    "${SOUNIO_OFFICIAL_ROOT:-}" \
+    "${SOUNIO_ROOT:-}" \
+    "$repo_root/.sounio-upstream" \
+    "$HOME/.cache/sounio-upstream" \
+    "$HOME/sounio-lang-sounio-origin-main" \
+    "$HOME/sounio-lang-sounio"; do
+    if [[ -n "$candidate" ]]; then
+      candidates+=("$candidate")
+    fi
+  done
+
+  for root in "${candidates[@]}"; do
+    if [[ -d "$root" ]]; then
+      printf '%s\n' "$root"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+pick_linux_souc() {
+  local root="$1"
+  local candidates=()
+
+  if [[ -n "${SOUNIO_LINUX_SOUC_PATH:-}" ]]; then
+    candidates+=("${SOUNIO_LINUX_SOUC_PATH}")
+  fi
+
+  candidates+=(
+    "$root/artifacts/omega/souc-bin/souc-linux-x86_64-jit"
+    "$root/dist/souc-linux-x86_64-jit"
+    "$root/bin/souc-linux-x86_64-jit"
+  )
+
+  for candidate in "${candidates[@]}"; do
+    if [[ -f "$candidate" ]]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+
+  printf '%s\n' "${candidates[@]}" >&2
+  return 1
+}
+
+if ! source_root="$(pick_source_root)"; then
+  echo "sounio-lima-souc: could not resolve a Sounio upstream root. Set SOUNIO_LINUX_SOURCE_ROOT or SOUNIO_SOURCE_ROOT." >&2
+  exit 127
+fi
+
+if ! linux_souc="$(pick_linux_souc "$source_root")"; then
+  echo "sounio-lima-souc: Linux souc binary not found under $source_root." >&2
+  exit 127
+fi
+
+stdlib_path="${SOUNIO_STDLIB_PATH:-$source_root/stdlib}"
 
 if ! command -v limactl >/dev/null 2>&1; then
   echo "sounio-lima-souc: limactl is required on the host." >&2
   exit 127
 fi
 
-if [[ ! -f "$linux_souc" ]]; then
-  echo "sounio-lima-souc: Linux souc binary not found at $linux_souc" >&2
+if [[ ! -d "$stdlib_path" ]]; then
+  echo "sounio-lima-souc: stdlib directory not found at $stdlib_path" >&2
   exit 127
 fi
 

@@ -952,6 +952,17 @@ module SounioRuntimeProbe =
           StatsValue = None
           Diagnostics = ResizeArray() }
 
+    let private showcaseUsable
+        (version: string option)
+        (stdlibPath: string option)
+        (checkSucceeded: bool)
+        (runSucceeded: bool)
+        (snioServer: SnioServerProbeResult)
+        =
+        version.IsSome
+        && stdlibPath.IsSome
+        && (snioServer.Succeeded || (checkSucceeded && runSucceeded))
+
     let private bashQuote (value: string) =
         "'" + value.Replace("'", "'\"'\"'") + "'"
 
@@ -1405,10 +1416,15 @@ module SounioRuntimeProbe =
             if snioInventory.SourceVersionJsonAvailable && not binaryVersionJsonAvailable then
                 diagnostics.Add("The upstream source tree advertises --version-json, but the currently built souc binary does not expose it yet.")
             diagnostics.AddRange(snioServer.Diagnostics)
+            if snioServer.Succeeded && not (checkSucceeded && runSucceeded) then
+                diagnostics.Add("Marked usable via upstream-first SNIO server probe even though the legacy runtime_probe.sio CLI smoke did not complete.")
+
+            let usable =
+                showcaseUsable version stdlibPath checkSucceeded runSucceeded snioServer
 
             let report: Darwin.ResearchOs.Contracts.SounioRuntimeProbeReport =
                 { Detected = true
-                  Usable = version.IsSome && checkSucceeded && runSucceeded && stdlibPath.IsSome
+                  Usable = usable
                   Source = source
                   SounioRoot = sounioRoot
                   NativeBackendSourceRoot = sourceInventory.Root
@@ -1602,6 +1618,8 @@ module SounioRuntimeProbe =
                 diagnostics.Add("Executed runtime_probe.sio via native Sounio FFI fallback because no cluster-usable souc/SNIO kernel execution path is available.")
                 true, true, false, false, ResizeArray(runtime.NativeProbeOutput)
             | _ ->
+                if request.RequireSnio then
+                    diagnostics.Add("RequireSnio=true blocked CLI fallback because no usable SNIO session/kernel path succeeded.")
                 if not runtime.Detected then
                     diagnostics.Add("No Sounio runtime is currently detected.")
                 elif not runtime.Usable then
